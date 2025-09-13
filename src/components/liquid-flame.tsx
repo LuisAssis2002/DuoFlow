@@ -19,13 +19,13 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
   // O preenchimento agora é controlado pela altura do `days`.
   // Chega a 100% (transform Y 0%) com 30 dias.
   const fillLevel = Math.min(days / 30, 1);
-  const transformY = 105 - (105 * fillLevel);
+  const transformY = 100 - (124 * fillLevel);
 
   return (
     <div className="relative w-full h-full">
       <svg
         className="w-full h-full"
-        viewBox="1400 1300 800 800"
+        viewBox="1400 1200 800 900"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
@@ -56,7 +56,7 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
 
         {/* Preenchimento Líquido */}
         <g clipPath="url(#flame-clip-path)" mask="url(#flame-liquid-mask)">
-          <rect x="1400" y="1400" width="600" height="600" style={{ fill: flameColor, transition: 'fill 1s ease-in-out' }} />
+          <rect x="1400" y="13200" width="800" height="900" style={{ fill: flameColor, transition: 'fill 1s ease-in-out' }} />
         </g>
       </svg>
     </div>
