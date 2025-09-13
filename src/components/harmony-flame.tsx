@@ -104,16 +104,18 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
 
   return (
     <>
-      <div className="flex items-center gap-4">
-        <LiquidFlame days={simulatedDays} />
-        <div className="text-center w-20">
-            <p className="font-headline text-4xl font-bold text-foreground">{actualDays}</p>
-            <p className="text-xs text-muted-foreground">dias de harmonia</p>
+      <div className="relative flex h-24 w-24 items-center justify-center">
+        <div className="absolute inset-0 z-0">
+          <LiquidFlame days={simulatedDays} />
         </div>
-        <Button variant="outline" size="sm" onClick={() => setIsDialogOpen(true)}>
-          Resetar
-        </Button>
+        <div className="relative z-10 flex flex-col items-center justify-center text-center">
+            <p className="font-headline text-4xl font-bold text-foreground drop-shadow-sm">{actualDays}</p>
+            <p className="text-xs text-muted-foreground -mt-1">dias</p>
+        </div>
       </div>
+      <Button variant="outline" size="sm" onClick={() => setIsDialogOpen(true)}>
+        Resetar
+      </Button>
       
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
