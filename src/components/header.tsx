@@ -52,7 +52,7 @@ export function AppHeader() {
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                   <Inbox className="h-6 w-6" />
                   {pendingInvitationsCount > 0 && (
-                    <span className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                    <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
                       {pendingInvitationsCount}
                     </span>
                   )}
