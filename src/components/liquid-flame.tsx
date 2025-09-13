@@ -43,19 +43,23 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
       <svg width="100%" height="100%" viewBox="250 0 550 1024" preserveAspectRatio="xMidYMid meet">
         <defs>
           <clipPath id="flameClip">
-            {/* O clip path é a forma pura, sem contorno */}
-            <path d={flamePath} />
+            <path
+                d={flamePath}
+                stroke="black" /* A cor aqui não importa, apenas a espessura */
+                strokeWidth={strokeWidth}
+                fill="black" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+            />
           </clipPath>
         </defs>
         
-        {/* Contorno da Chama */}
+        {/* Contorno da Chama (invisível, só pra manter o espaço) */}
         <path 
             d={flamePath}
-            stroke="hsl(var(--border))" 
+            stroke="transparent" 
             strokeWidth={strokeWidth} 
             fill="none" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
         />
         
         {/* Preenchimento com Animação de Onda */}
@@ -91,5 +95,3 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
     </div>
   );
 }
-
-    
