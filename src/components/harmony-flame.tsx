@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Flame, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { Flame, Loader2 } from 'lucide-react';
 import { differenceInDays } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,23 +21,14 @@ import { db } from '@/lib/firebase';
 import { doc, updateDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useFormStatus } from 'react-dom';
 import { LiquidFlame } from './liquid-flame';
-import { EvolvingFlame } from './evolving-flame';
-import { HarmonyGarden } from './harmony-garden';
 
 interface HarmonyFlameProps {
   partnership: Partnership;
 }
 
-const animationComponents = ['liquid', 'evolving', 'garden'] as const;
-type AnimationType = typeof animationComponents[number];
-
-
 export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
   const [actualDays, setActualDays] = React.useState(0);
-  const [simulatedDays, setSimulatedDays] = React.useState(0);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
-  const [currentAnimation, setCurrentAnimation] = React.useState<AnimationType>('liquid');
-
   const { toast } = useToast();
   const formRef = React.useRef<HTMLFormElement>(null);
   
@@ -47,18 +38,8 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
       const resetDate = new Date(partnership.harmonyFlame.lastReset);
       const days = differenceInDays(now, resetDate);
       setActualDays(days);
-      setSimulatedDays(days); // Start simulation from actual days
     }
   }, [partnership.harmonyFlame.lastReset]);
-
-  // Simulation effect to showcase animations
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setSimulatedDays(prevDays => (prevDays >= 100 ? 0 : prevDays + 1));
-    }, 200); // Increase days every 200ms for demo
-
-    return () => clearInterval(interval);
-  }, []);
 
   async function handleReset(formData: FormData) {
     const reason = formData.get('reason') as string;
@@ -109,51 +90,15 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
         </Button>
     )
   }
-  
-  const handleNextAnimation = () => {
-      const currentIndex = animationComponents.indexOf(currentAnimation);
-      const nextIndex = (currentIndex + 1) % animationComponents.length;
-      setCurrentAnimation(animationComponents[nextIndex]);
-  }
-
-  const handlePrevAnimation = () => {
-      const currentIndex = animationComponents.indexOf(currentAnimation);
-      const prevIndex = (currentIndex - 1 + animationComponents.length) % animationComponents.length;
-      setCurrentAnimation(animationComponents[prevIndex]);
-  }
-
-  const renderAnimation = () => {
-    switch (currentAnimation) {
-      case 'liquid':
-        return <LiquidFlame days={simulatedDays} />;
-      case 'evolving':
-        return <EvolvingFlame days={simulatedDays} />;
-      case 'garden':
-        return <HarmonyGarden days={simulatedDays} />;
-      default:
-        return <LiquidFlame days={simulatedDays} />;
-    }
-  }
 
   return (
     <>
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={handlePrevAnimation} className="h-8 w-8">
-            <ChevronLeft />
-        </Button>
-
-        <div className="flex items-center gap-3">
-            {renderAnimation()}
-            <div className="text-center w-20">
-                <p className="font-headline text-4xl font-bold text-foreground">{actualDays}</p>
-                <p className="text-xs text-muted-foreground">dias de harmonia</p>
-            </div>
+        <LiquidFlame days={actualDays} />
+        <div className="text-center w-20">
+            <p className="font-headline text-4xl font-bold text-foreground">{actualDays}</p>
+            <p className="text-xs text-muted-foreground">dias de harmonia</p>
         </div>
-        
-        <Button variant="ghost" size="icon" onClick={handleNextAnimation} className="h-8 w-8">
-            <ChevronRight />
-        </Button>
-
         <Button variant="outline" size="sm" onClick={() => setIsDialogOpen(true)}>
           Resetar
         </Button>
