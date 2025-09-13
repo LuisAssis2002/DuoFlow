@@ -37,12 +37,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setLoading(true);
       if (firebaseUser) {
-        setUser(firebaseUser);
         const userDocRef = doc(db, 'users', firebaseUser.uid);
         const userDocSnap = await getDoc(userDocRef);
-        
+
         if (!userDocSnap.exists()) {
           const photoBase64 = firebaseUser.photoURL ? await toBase64(firebaseUser.photoURL) : '';
           await setDoc(userDocRef, {
@@ -51,52 +49,67 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             photoURL: photoBase64,
           });
         }
-        
-        // Listen for partnership changes
-        onSnapshot(doc(db, 'users', firebaseUser.uid), (doc) => {
-            const userData = doc.data();
-            if(userData && userData.partnershipId) {
-                onSnapshot(doc(db, 'partnerships', userData.partnershipId), (partnershipDoc) => {
-                    if (partnershipDoc.exists()) {
-                        setPartnership(partnershipDoc.data() as Partnership);
-                    } else {
-                        setPartnership(null);
-                    }
-                    setLoading(false); // Stop loading after partnership status is known
-                });
-            } else {
-                setPartnership(null);
-                setLoading(false); // Stop loading if no partnership
-            }
-        });
-
+        setUser(firebaseUser);
       } else {
         setUser(null);
         setPartnership(null);
-        setLoading(false);
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (!user) {
+        setPartnership(null);
+        return;
+    }
+
+    const userDocRef = doc(db, 'users', user.uid);
+    const unsubscribeUser = onSnapshot(userDocRef, (userDoc) => {
+        const userData = userDoc.data();
+        if (userData && userData.partnershipId) {
+            const partnershipDocRef = doc(db, 'partnerships', userData.partnershipId);
+            const unsubscribePartnership = onSnapshot(partnershipDocRef, (partnershipDoc) => {
+                if (partnershipDoc.exists()) {
+                    setPartnership({id: partnershipDoc.id, ...partnershipDoc.data()} as Partnership);
+                } else {
+                    setPartnership(null);
+                }
+            });
+            // Cleanup partnership listener on new user snapshot
+            return () => unsubscribePartnership();
+        } else {
+            setPartnership(null);
+        }
+    });
+
+    // Cleanup user listener on component unmount or user change
+    return () => unsubscribeUser();
+}, [user]);
+
+
   const signIn = async () => {
     const provider = new GoogleAuthProvider();
+    setLoading(true);
     try {
       await signInWithPopup(auth, provider);
       // onAuthStateChanged will handle the rest
     } catch (error) {
       console.error("Error signing in with Google: ", error);
-      setLoading(false); // Stop loading on error
+      setLoading(false);
     }
   };
 
   const logout = async () => {
+    setLoading(true);
     try {
       await signOut(auth);
       // onAuthStateChanged will handle the rest
     } catch (error) {
       console.error("Error signing out: ", error);
+      setLoading(false);
     }
   };
 

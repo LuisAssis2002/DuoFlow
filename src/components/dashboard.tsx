@@ -52,11 +52,13 @@ export function Dashboard() {
         await deleteDoc(taskRef);
     };
 
+    const partnershipReady = partnership && partnership.members.length > 1;
+
     return (
         <div className="flex min-h-screen w-full flex-col">
         <AppHeader />
         <div className="container mx-auto px-4 py-8">
-            {partnership && partnership.members.length > 1 ? (
+            {partnershipReady ? (
                 <TaskContainer
                     partnership={partnership}
                     onTaskAdd={handleTaskAdd}
