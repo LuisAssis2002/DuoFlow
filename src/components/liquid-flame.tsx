@@ -62,7 +62,3 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
     </div>
   );
 }
-
-    
-
-    

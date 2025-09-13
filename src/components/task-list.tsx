@@ -34,12 +34,14 @@ export function TaskList({ tasks, partnership, onTaskUpdate, onTaskDelete }: Tas
             ))}
           </div>
         ) : (
-          <p className="text-muted-foreground">Nenhuma tarefa pendente. Hora de relaxar ou criar uma nova!</p>
+          <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted bg-card p-12 text-center">
+            <p className="text-muted-foreground">Nenhuma tarefa pendente. Hora de relaxar ou criar uma nova!</p>
+          </div>
         )}
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold mb-4">Concluídas</h2>
+        <h2 className="text-xl font-semibold mb-4">Concluídas (Últimos 30 dias)</h2>
         {completedTasks.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {completedTasks.map((task) => (
@@ -47,7 +49,9 @@ export function TaskList({ tasks, partnership, onTaskUpdate, onTaskDelete }: Tas
             ))}
           </div>
         ) : (
-          <p className="text-muted-foreground">Nenhuma tarefa concluída recentemente.</p>
+          <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted bg-card p-12 text-center">
+            <p className="text-muted-foreground">Nenhuma tarefa concluída recentemente.</p>
+          </div>
         )}
       </div>
     </div>

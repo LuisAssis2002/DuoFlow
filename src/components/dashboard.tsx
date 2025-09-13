@@ -55,9 +55,9 @@ export function Dashboard() {
     const partnershipReady = partnership && partnership.members.length > 1;
 
     return (
-        <div className="flex min-h-screen w-full flex-col">
+        <div className="flex min-h-screen w-full flex-col bg-background">
         <AppHeader />
-        <div className="container mx-auto px-4 py-8">
+        <main className="flex-grow container mx-auto px-4 py-8">
             {partnershipReady ? (
                 <TaskContainer
                     partnership={partnership}
@@ -66,7 +66,7 @@ export function Dashboard() {
                     onTaskDelete={handleTaskDelete}
                 />
             ) : (
-                <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted bg-card p-12 text-center">
+                <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted bg-card p-12 text-center h-full">
                     <Users className="h-12 w-12 text-muted-foreground" />
                     <h2 className="mt-4 text-xl font-semibold">Você ainda não está pareado</h2>
                     <p className="mt-2 text-sm text-muted-foreground">
@@ -79,7 +79,7 @@ export function Dashboard() {
                     </div>
               </div>
             )}
-        </div>
+        </main>
         </div>
     );
 }

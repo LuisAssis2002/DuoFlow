@@ -47,11 +47,11 @@ export function TaskCard({ task, partnership, onTaskUpdate, onTaskDelete }: Task
   };
 
   return (
-    <Card className={cn("flex flex-col", task.status === 'Concluída' && 'bg-muted/50')}>
+    <Card className={cn("flex flex-col transition-all hover:shadow-lg", task.status === 'Concluída' && 'bg-card/50 opacity-80')}>
       <CardHeader className="flex-row items-start justify-between">
         <div className="space-y-1.5">
-          <CardTitle className="text-lg">{task.title}</CardTitle>
-          <CardDescription className={cn(isOverdue && "text-destructive font-semibold")}>{timeText()}</CardDescription>
+          <CardTitle className="text-lg font-semibold">{task.title}</CardTitle>
+          <CardDescription className={cn("text-xs", isOverdue && "text-destructive font-semibold")}>{timeText()}</CardDescription>
         </div>
         <DropdownMenu>
             <DropdownMenuTrigger asChild>

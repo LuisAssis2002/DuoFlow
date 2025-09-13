@@ -3,7 +3,7 @@
 import * as React from 'react';
 import type { Partnership, Task, UserProfile } from '@/types';
 import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Plus } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -59,9 +59,9 @@ export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDele
   const handleCloseForm = () => setIsFormOpen(false);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative pb-20 md:pb-0">
       <Tabs defaultValue="list">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <TabsList>
             <TabsTrigger value="list">Lista</TabsTrigger>
             <TabsTrigger value="calendar">Calendário</TabsTrigger>
@@ -74,15 +74,15 @@ export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDele
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="me" id="r-me" />
-              <Label htmlFor="r-me">Minhas Tarefas</Label>
+              <Label htmlFor="r-me">Minhas</Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="partner" id="r-partner" />
-              <Label htmlFor="r-partner">Tarefas do Parceiro</Label>
+              <Label htmlFor="r-partner">Dele(a)</Label>
             </div>
           </RadioGroup>
 
-          <Button onClick={handleOpenForm}>
+          <Button onClick={handleOpenForm} className="hidden md:inline-flex">
             <PlusCircle className="mr-2 h-4 w-4" />
             Nova Tarefa
           </Button>
@@ -95,6 +95,11 @@ export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDele
           <TaskCalendar tasks={filteredTasks} partnership={partnership} />
         </TabsContent>
       </Tabs>
+
+      <Button onClick={handleOpenForm} className="md:hidden fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg z-30">
+            <Plus className="h-8 w-8" />
+      </Button>
+
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <DialogContent className="sm:max-w-[500px]">
