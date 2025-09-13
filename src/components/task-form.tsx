@@ -81,7 +81,7 @@ export function TaskForm({ task, partnership, onTaskCreated, onCancel }: TaskFor
   function onSubmit(values: z.infer<typeof formSchema>) {
     const newOrUpdatedTask = {
         ...values,
-        startDate: values.startDate?.toISOString(),
+        startDate: values.startDate ? values.startDate.toISOString() : null,
         endDate: values.endDate.toISOString(),
         status: task?.status ?? 'Pendente',
     };

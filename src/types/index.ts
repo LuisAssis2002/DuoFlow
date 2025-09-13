@@ -11,7 +11,7 @@ export type Task = {
   description: string;
   type: 'Única' | 'Progressiva';
   difficulty: 'Rotineira' | 'Fácil' | 'Média' | 'Difícil';
-  startDate?: string; // ISO string
+  startDate?: string | null; // ISO string
   endDate: string; // ISO string
   status: 'Pendente' | 'Concluída';
   assignedTo: string; // userId

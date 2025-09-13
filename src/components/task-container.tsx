@@ -12,7 +12,7 @@ import { TaskCalendar } from './task-calendar';
 import { TaskForm } from './task-form';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/use-auth';
-import { collection, onSnapshot, query } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 interface TaskContainerProps {
@@ -32,7 +32,7 @@ export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDele
   
   React.useEffect(() => {
     if (!partnership?.id) return;
-    const q = query(collection(db, "partnerships", partnership.id, "tasks"));
+    const q = query(collection(db, "partnerships", partnership.id, "tasks"), orderBy("endDate", "asc"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const tasksData: Task[] = [];
       querySnapshot.forEach((doc) => {
