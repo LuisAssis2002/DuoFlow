@@ -12,7 +12,7 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
   const getFlameColor = () => {
     if (days >= 60) return 'hsl(48, 97%, 59%)'; // Dourado Final (primary)
     if (days >= 30) return 'hsl(35, 90%, 55%)'; // Transição para Dourado
-    return 'hsl(18, 80%, 50%)'; // Vermelho/Laranja inicial (accent)
+    return 'hsl(var(--accent))'; // Laranja inicial (accent)
   };
   const flameColor = getFlameColor();
   
