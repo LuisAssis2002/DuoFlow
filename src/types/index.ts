@@ -20,9 +20,21 @@ export type Task = {
 
 export type Partnership = {
   id: string;
-  members: [UserProfile, UserProfile] | [UserProfile];
+  members: UserProfile[];
   harmonyFlame: {
     lastReset: string; // ISO string
   };
   tasks: Task[];
 };
+
+export type Invitation = {
+    id: string;
+    from: {
+        id: string;
+        displayName: string;
+        photoURL: string;
+    };
+    toEmail: string;
+    status: 'pending' | 'accepted' | 'declined';
+    createdAt: any; // Firestore ServerTimestamp
+}

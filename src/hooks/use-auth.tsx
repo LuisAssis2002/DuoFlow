@@ -3,16 +3,19 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, type User } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
-import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
-import type { Partnership } from '@/types';
+import { doc, getDoc, setDoc, onSnapshot, collection, query, where, updateDoc, writeBatch } from 'firebase/firestore';
+import type { Partnership, Invitation } from '@/types';
 import { Loader2 } from 'lucide-react';
 
 interface AuthContextType {
   user: User | null;
   partnership: Partnership | null;
+  invitations: Invitation[];
   loading: boolean;
   signIn: () => Promise<void>;
   logout: () => Promise<void>;
+  acceptInvitation: (invitationId: string) => Promise<void>;
+  declineInvitation: (invitationId: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,6 +36,7 @@ const toBase64 = async (url: string): Promise<string> => {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [partnership, setPartnership] = useState<Partnership | null>(null);
+  const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -40,17 +44,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(firebaseUser);
         setLoading(false);
     });
-
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
   useEffect(() => {
     if (!user) {
         setPartnership(null);
+        setInvitations([]);
         return;
     }
-
+    
+    // Listener for user's partnership
     const userDocRef = doc(db, 'users', user.uid);
     const unsubscribeUser = onSnapshot(userDocRef, (userDoc) => {
         const userData = userDoc.data();
@@ -63,15 +67,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     setPartnership(null);
                 }
             });
-            // Cleanup partnership listener on new user snapshot
             return () => unsubscribePartnership();
         } else {
             setPartnership(null);
         }
     });
 
-    // Cleanup user listener on component unmount or user change
-    return () => unsubscribeUser();
+    // Listener for pending invitations
+    const q = query(collection(db, 'invitations'), where('toEmail', '==', user.email), where('status', '==', 'pending'));
+    const unsubscribeInvitations = onSnapshot(q, (snapshot) => {
+        const invs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Invitation));
+        setInvitations(invs);
+    });
+
+
+    return () => {
+        unsubscribeUser();
+        unsubscribeInvitations();
+    };
 }, [user]);
 
 
@@ -93,10 +106,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             photoURL: photoBase64,
           });
       }
-      // O onAuthStateChanged vai cuidar de atualizar o estado do usuário e setar o loading para false
     } catch (error) {
       console.error("Error signing in with Google: ", error);
-      // O onAuthStateChanged vai ser chamado com user=null e setará o loading para false.
+    } finally {
+        // onAuthStateChanged vai ser chamado e vai setar o loading pra false
     }
   };
 
@@ -104,12 +117,52 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(true);
     try {
       await signOut(auth);
-      // onAuthStateChanged will handle setting user to null and loading to false
     } catch (error) {
       console.error("Error signing out: ", error);
-      setLoading(false);
+    } finally {
+        // onAuthStateChanged vai ser chamado e vai setar o loading pra false
     }
   };
+
+  const acceptInvitation = async (invitationId: string) => {
+    if (!user) return;
+    const invitation = invitations.find(inv => inv.id === invitationId);
+    if (!invitation) return;
+
+    const batch = writeBatch(db);
+
+    // 1. Create new partnership
+    const partnershipRef = doc(collection(db, 'partnerships'));
+    const newPartnership = {
+        members: [
+            { id: invitation.from.id, displayName: invitation.from.displayName, photoURL: invitation.from.photoURL },
+            { id: user.uid, displayName: user.displayName, email: user.email, photoURL: user.photoURL }
+        ],
+        harmonyFlame: {
+            lastReset: new Date().toISOString()
+        }
+    };
+    batch.set(partnershipRef, newPartnership);
+
+    // 2. Update both users with the new partnershipId
+    const user1Ref = doc(db, 'users', invitation.from.id);
+    batch.update(user1Ref, { partnershipId: partnershipRef.id });
+
+    const user2Ref = doc(db, 'users', user.uid);
+    batch.update(user2Ref, { partnershipId: partnershipRef.id });
+    
+    // 3. Update the invitation status to 'accepted'
+    const invitationRef = doc(db, 'invitations', invitationId);
+    batch.update(invitationRef, { status: 'accepted' });
+
+    await batch.commit();
+  };
+
+  const declineInvitation = async (invitationId: string) => {
+    const invitationRef = doc(db, 'invitations', invitationId);
+    await updateDoc(invitationRef, { status: 'declined' });
+  };
+
 
   if (loading) {
     return (
@@ -120,7 +173,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, partnership, loading, signIn, logout }}>
+    <AuthContext.Provider value={{ user, partnership, loading, invitations, signIn, logout, acceptInvitation, declineInvitation }}>
       {children}
     </AuthContext.Provider>
   );

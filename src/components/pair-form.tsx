@@ -18,6 +18,10 @@ import { useToast } from '@/hooks/use-toast';
 import { Flame } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/use-auth';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { SubmitButton } from './submit-button';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Por favor, insira um e-mail válido.' }),
@@ -26,6 +30,8 @@ const formSchema = z.object({
 export function PairForm() {
   const { toast } = useToast();
   const router = useRouter();
+  const { user } = useAuth();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,18 +39,55 @@ export function PairForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // This is a placeholder. Real implementation will use Firebase Functions
-    console.log('Convite de pareamento simulado enviado para:', values.email);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!user) {
+        toast({
+            title: 'Erro',
+            description: 'Você precisa estar logado para enviar um convite.',
+            variant: 'destructive'
+        });
+        return;
+    }
 
-    toast({
-      title: 'Convite Enviado!',
-      description: `Um convite foi enviado para ${values.email}. Você será redirecionado para o painel principal.`,
-    });
+    if (user.email === values.email) {
+      toast({
+        title: 'Erro',
+        description: 'Você não pode convidar a si mesmo.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    try {
+        await addDoc(collection(db, 'invitations'), {
+            from: {
+                id: user.uid,
+                displayName: user.displayName,
+                photoURL: user.photoURL
+            },
+            toEmail: values.email,
+            status: 'pending',
+            createdAt: serverTimestamp()
+        });
 
-    setTimeout(() => {
-        router.push('/');
-    }, 2000);
+        toast({
+          title: 'Convite Enviado!',
+          description: `Um convite foi enviado para ${values.email}. Você será redirecionado para o painel principal.`,
+        });
+
+        setTimeout(() => {
+            router.push('/');
+        }, 2000);
+
+    } catch (error) {
+        console.error("Erro ao enviar convite: ", error);
+        toast({
+            title: 'Erro',
+            description: 'Houve uma falha ao enviar o convite. Tente novamente.',
+            variant: 'destructive'
+        });
+    }
+
   }
 
   return (
@@ -73,9 +116,9 @@ export function PairForm() {
               )}
             />
             <div className="flex flex-col gap-4">
-                <Button type="submit" className="w-full">
+                <SubmitButton className="w-full">
                     Enviar Convite
-                </Button>
+                </SubmitButton>
                 <Button variant="outline" asChild>
                     <Link href="/">Voltar para o Painel</Link>
                 </Button>
