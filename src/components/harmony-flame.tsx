@@ -3,7 +3,6 @@
 
 import * as React from 'react';
 import { Loader2 } from 'lucide-react';
-import { differenceInDays } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -28,19 +27,19 @@ interface HarmonyFlameProps {
 }
 
 export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
-  const [actualDays, setActualDays] = React.useState(0);
+  const [demoDays, setDemoDays] = React.useState(0);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const { toast } = useToast();
   const formRef = React.useRef<HTMLFormElement>(null);
   
+  // Efeito para simular a animação dos dias
   React.useEffect(() => {
-    if (partnership.harmonyFlame.lastReset) {
-      const now = new Date();
-      const resetDate = new Date(partnership.harmonyFlame.lastReset);
-      const days = differenceInDays(now, resetDate);
-      setActualDays(days);
-    }
-  }, [partnership.harmonyFlame.lastReset]);
+    const interval = setInterval(() => {
+      setDemoDays(prevDays => (prevDays >= 70 ? 0 : prevDays + 1));
+    }, 1000); // Aumenta a cada segundo
+
+    return () => clearInterval(interval); // Limpa o intervalo quando o componente desmonta
+  }, []);
 
   async function handleReset(formData: FormData) {
     const reason = formData.get('reason') as string;
@@ -100,9 +99,9 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
           className="relative mx-auto h-16 w-16 rounded-full transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <div className="font-headline absolute left-1/2 top-[68%] z-10 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold leading-none text-foreground">
-            {actualDays}
+            {demoDays}
           </div>
-          <LiquidFlame days={actualDays} />
+          <LiquidFlame days={demoDays} />
         </button>
         <h2 className="mt-0 text-[9px] font-normal uppercase tracking-widest text-muted-foreground">
           dias de harmonia
