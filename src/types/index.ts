@@ -20,7 +20,7 @@ export type Task = {
 
 export type Partnership = {
   id: string;
-  members: [User, User];
+  members: [User, User] | [User];
   harmonyFlame: {
     lastReset: string; // ISO string
   };
