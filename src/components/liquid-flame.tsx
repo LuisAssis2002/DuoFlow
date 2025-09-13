@@ -45,21 +45,19 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
           <clipPath id="flameClip">
             <path
                 d={flamePath}
-                stroke="black" /* A cor aqui não importa, apenas a espessura */
-                strokeWidth={strokeWidth}
-                fill="black" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
+                fill="black"
             />
           </clipPath>
         </defs>
         
-        {/* Contorno da Chama (invisível, só pra manter o espaço) */}
+        {/* Contorno da Chama (fundo) */}
         <path 
             d={flamePath}
-            stroke="transparent" 
+            stroke="hsl(var(--muted-foreground))"
             strokeWidth={strokeWidth} 
-            fill="none" 
+            fill="transparent" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
         />
         
         {/* Preenchimento com Animação de Onda */}
