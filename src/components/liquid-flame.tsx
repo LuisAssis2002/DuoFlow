@@ -25,7 +25,7 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
     <div className="relative w-full h-full">
       <svg
         className="w-full h-full"
-        viewBox="1450 1450 600 600"
+        viewBox="1525 1450 450 600"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
@@ -37,7 +37,7 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
              {/* Esta é a forma ondulada do líquido */}
             <path 
                 fill="white"
-                d="M 1450,1450 C 1625,1500 1875,1380 2000,1450 V 2050 H 1450 Z"
+                d="M 1525,1450 C 1700,1500 1800,1380 1975,1450 V 2050 H 1525 Z"
                  style={{
                     transform: `translateY(${transformY}%)`,
                     transition: 'transform 0.5s ease-out', // Suaviza a subida do líquido
