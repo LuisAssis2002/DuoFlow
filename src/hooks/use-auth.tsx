@@ -36,27 +36,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        const userDocRef = doc(db, 'users', firebaseUser.uid);
-        const userDocSnap = await getDoc(userDocRef);
-
-        if (!userDocSnap.exists()) {
-          const photoBase64 = firebaseUser.photoURL ? await toBase64(firebaseUser.photoURL) : '';
-          await setDoc(userDocRef, {
-            displayName: firebaseUser.displayName,
-            email: firebaseUser.email,
-            photoURL: photoBase64,
-          });
-        }
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
         setUser(firebaseUser);
-      } else {
-        setUser(null);
-        setPartnership(null);
-      }
-      setLoading(false);
+        setLoading(false);
     });
 
+    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
@@ -94,11 +79,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const provider = new GoogleAuthProvider();
     setLoading(true);
     try {
-      await signInWithPopup(auth, provider);
-      // onAuthStateChanged will handle the rest
+      const result = await signInWithPopup(auth, provider);
+      const firebaseUser = result.user;
+
+      const userDocRef = doc(db, 'users', firebaseUser.uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (!userDocSnap.exists()) {
+          const photoBase64 = firebaseUser.photoURL ? await toBase64(firebaseUser.photoURL) : '';
+          await setDoc(userDocRef, {
+            displayName: firebaseUser.displayName,
+            email: firebaseUser.email,
+            photoURL: photoBase64,
+          });
+      }
+      // O onAuthStateChanged vai cuidar de atualizar o estado do usuário
     } catch (error) {
       console.error("Error signing in with Google: ", error);
-      setLoading(false);
+      setUser(null);
+    } finally {
+        setLoading(false);
     }
   };
 
@@ -106,10 +106,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(true);
     try {
       await signOut(auth);
-      // onAuthStateChanged will handle the rest
+      // onAuthStateChanged will handle setting user to null
     } catch (error) {
       console.error("Error signing out: ", error);
-      setLoading(false);
+      setLoading(false); // Only set loading false here on error
     }
   };
 
