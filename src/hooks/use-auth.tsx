@@ -17,6 +17,19 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Função para converter URL de imagem para Base64
+const toBase64 = async (url: string): Promise<string> => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+};
+
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [partnership, setPartnership] = useState<Partnership | null>(null);
@@ -29,11 +42,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(firebaseUser);
         const userDocRef = doc(db, 'users', firebaseUser.uid);
         const userDocSnap = await getDoc(userDocRef);
+        
         if (!userDocSnap.exists()) {
+          const photoBase64 = firebaseUser.photoURL ? await toBase64(firebaseUser.photoURL) : '';
           await setDoc(userDocRef, {
             displayName: firebaseUser.displayName,
             email: firebaseUser.email,
-            photoURL: firebaseUser.photoURL,
+            photoURL: photoBase64,
           });
         }
         
@@ -71,7 +86,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       console.error("Error signing in with Google: ", error);
     } finally {
-      // setLoading(false); // Auth state change will handle this
+      // Auth state change will handle this
     }
   };
 
@@ -82,7 +97,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       console.error("Error signing out: ", error);
     } finally {
-      // setLoading(false); // Auth state change will handle this
+      // Auth state change will handle this
     }
   };
 
