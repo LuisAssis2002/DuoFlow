@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Flame } from 'lucide-react';
+import { Flame, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { differenceInDays } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,19 +16,27 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { SubmitButton } from './submit-button';
 import type { Partnership } from '@/types';
 import { db } from '@/lib/firebase';
 import { doc, updateDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useFormStatus } from 'react-dom';
+import { LiquidFlame } from './liquid-flame';
+import { EvolvingFlame } from './evolving-flame';
+import { HarmonyGarden } from './harmony-garden';
 
 interface HarmonyFlameProps {
   partnership: Partnership;
 }
 
+const animationComponents = ['liquid', 'evolving', 'garden'] as const;
+type AnimationType = typeof animationComponents[number];
+
+
 export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
-  const [days, setDays] = React.useState(0);
+  const [actualDays, setActualDays] = React.useState(0);
+  const [simulatedDays, setSimulatedDays] = React.useState(0);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [currentAnimation, setCurrentAnimation] = React.useState<AnimationType>('liquid');
 
   const { toast } = useToast();
   const formRef = React.useRef<HTMLFormElement>(null);
@@ -37,12 +45,20 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
     if (partnership.harmonyFlame.lastReset) {
       const now = new Date();
       const resetDate = new Date(partnership.harmonyFlame.lastReset);
-      setDays(differenceInDays(now, resetDate));
+      const days = differenceInDays(now, resetDate);
+      setActualDays(days);
+      setSimulatedDays(days); // Start simulation from actual days
     }
   }, [partnership.harmonyFlame.lastReset]);
 
+  // Simulation effect to showcase animations
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setSimulatedDays(prevDays => (prevDays >= 100 ? 0 : prevDays + 1));
+    }, 200); // Increase days every 200ms for demo
 
-  const flameSize = Math.min(2.5 + days / 10, 6);
+    return () => clearInterval(interval);
+  }, []);
 
   async function handleReset(formData: FormData) {
     const reason = formData.get('reason') as string;
@@ -93,34 +109,56 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
         </Button>
     )
   }
+  
+  const handleNextAnimation = () => {
+      const currentIndex = animationComponents.indexOf(currentAnimation);
+      const nextIndex = (currentIndex + 1) % animationComponents.length;
+      setCurrentAnimation(animationComponents[nextIndex]);
+  }
+
+  const handlePrevAnimation = () => {
+      const currentIndex = animationComponents.indexOf(currentAnimation);
+      const prevIndex = (currentIndex - 1 + animationComponents.length) % animationComponents.length;
+      setCurrentAnimation(animationComponents[prevIndex]);
+  }
+
+  const renderAnimation = () => {
+    switch (currentAnimation) {
+      case 'liquid':
+        return <LiquidFlame days={simulatedDays} />;
+      case 'evolving':
+        return <EvolvingFlame days={simulatedDays} />;
+      case 'garden':
+        return <HarmonyGarden days={simulatedDays} />;
+      default:
+        return <LiquidFlame days={simulatedDays} />;
+    }
+  }
 
   return (
     <>
       <div className="flex items-center gap-3">
-        <Flame
-          className="text-accent transition-all duration-500"
-          style={{
-            width: `${flameSize}rem`,
-            height: `${flameSize}rem`,
-            animation: days > 10 ? 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none',
-          }}
-        />
-        <div className="text-center">
-          <p className="font-headline text-4xl font-bold text-foreground">{days}</p>
-          <p className="text-xs text-muted-foreground">dias de harmonia</p>
+        <Button variant="ghost" size="icon" onClick={handlePrevAnimation} className="h-8 w-8">
+            <ChevronLeft />
+        </Button>
+
+        <div className="flex items-center gap-3">
+            {renderAnimation()}
+            <div className="text-center w-20">
+                <p className="font-headline text-4xl font-bold text-foreground">{actualDays}</p>
+                <p className="text-xs text-muted-foreground">dias de harmonia</p>
+            </div>
         </div>
+        
+        <Button variant="ghost" size="icon" onClick={handleNextAnimation} className="h-8 w-8">
+            <ChevronRight />
+        </Button>
+
         <Button variant="outline" size="sm" onClick={() => setIsDialogOpen(true)}>
           Resetar
         </Button>
       </div>
-      <style jsx>{`
-        @keyframes pulse {
-          50% {
-            opacity: 0.8;
-            transform: scale(1.1);
-          }
-        }
-      `}</style>
+      
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
