@@ -105,12 +105,12 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
   return (
     <>
       <div className="flex flex-col items-center justify-center gap-2">
-        <div className="relative flex h-20 w-20 items-center justify-center">
+        <div className="relative flex h-16 w-16 items-center justify-center">
             <div className="absolute inset-0 z-0">
                 <LiquidFlame days={actualDays} />
             </div>
             <div className="relative z-10 flex flex-col items-center justify-center text-center">
-                <p className="font-headline text-4xl font-bold text-foreground drop-shadow-sm">{actualDays}</p>
+                <p className="font-headline text-3xl font-bold text-foreground drop-shadow-sm">{actualDays}</p>
             </div>
         </div>
         <p className="text-xs text-muted-foreground whitespace-nowrap">dias de harmonia</p>
