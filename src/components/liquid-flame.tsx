@@ -39,8 +39,7 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
                 fill="white"
                 d="M 260,140 C 435,200 685,80 810,140 V 1012 H 260 Z"
                 style={{
-                    transform: `translateY(${transformY}%)`,
-                    transition: 'transform 0.3s ease-out' // Transição suave
+                  animation: `liquid-fill-animation ${Math.max(1.5, 3.5 * fillLevel)}s ease-in-out forwards`,
                 }}
             />
           </mask>
