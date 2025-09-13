@@ -95,20 +95,19 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
   return (
     <>
       <div className="flex flex-col items-center justify-center text-center">
-        <div className="relative mx-auto h-16 w-16">
+        <button
+          onClick={() => setIsDialogOpen(true)}
+          className="relative mx-auto h-16 w-16 rounded-full transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
           <div className="font-headline absolute left-1/2 top-[68%] z-10 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold leading-none text-foreground">
             {actualDays}
           </div>
           <LiquidFlame days={actualDays} />
-        </div>
+        </button>
         <h2 className="mt-0 text-xs font-normal uppercase tracking-widest text-muted-foreground">
           dias de harmonia
         </h2>
       </div>
-
-      <Button variant="outline" size="sm" onClick={() => setIsDialogOpen(true)}>
-        Resetar
-      </Button>
       
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
