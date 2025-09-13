@@ -1,0 +1,1 @@
+Por favor, substitua este arquivo pela sua imagem `logo.png`.

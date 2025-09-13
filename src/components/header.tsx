@@ -2,7 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { HarmonyFlame } from './harmony-flame';
-import { LogOut, Inbox, Settings } from 'lucide-react';
+import { LogOut, Settings } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from './ui/button';
 import {
@@ -12,6 +12,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { InvitationsDropdown } from './invitations-dropdown';
+import { Inbox } from 'lucide-react';
+import Image from 'next/image';
 
 export function AppHeader() {
   const { user, partnership, logout, invitations } = useAuth();
@@ -24,47 +26,7 @@ export function AppHeader() {
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur-sm">
       <div className="container mx-auto flex h-20 items-center justify-between px-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center">
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <defs>
-                <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#fdf497" />
-                  <stop offset="45%" stopColor="#fd5949" />
-                  <stop offset="60%" stopColor="#d6249f" />
-                  <stop offset="90%" stopColor="#285aeb" />
-                </linearGradient>
-              </defs>
-              <rect
-                x="1.5"
-                y="1.5"
-                width="21"
-                height="21"
-                rx="5"
-                stroke="url(#logo-gradient)"
-                strokeWidth="2"
-              />
-              <path
-                  d="M17 11.5a2.5 2.5 0 0 1-5 0V9.3l-3.2 3.2a2.5 2.5 0 0 1-3.53 0L3 10.2V15a2 2 0 0 0 2 2h9.8"
-                  stroke="url(#logo-gradient)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-              />
-               <path
-                  d="M14.5 9.3 10.2 5 7 8.2"
-                  stroke="url(#logo-gradient)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-              />
-            </svg>
-          </div>
+          <Image src="/logo.png" alt="DuoFlow Logo" width={32} height={32} />
           <h1 className="text-2xl font-bold tracking-tight text-foreground">DuoFlow</h1>
         </div>
         {user && (
