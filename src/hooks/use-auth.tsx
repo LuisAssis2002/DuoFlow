@@ -96,8 +96,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // O onAuthStateChanged vai cuidar de atualizar o estado do usuário e setar o loading para false
     } catch (error) {
       console.error("Error signing in with Google: ", error);
-      setUser(null);
-      setLoading(false);
+      // O onAuthStateChanged vai ser chamado com user=null e setará o loading para false.
     }
   };
 
