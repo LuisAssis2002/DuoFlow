@@ -95,9 +95,9 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
   return (
     <>
       <div className="flex flex-col items-center justify-center text-center">
-        <div className="relative mx-auto h-24 w-24">
+        <div className="relative mx-auto h-20 w-20">
           <div className="absolute left-1/2 top-[65%] z-10 -translate-x-1/2 -translate-y-1/2">
-            <p className="font-headline text-4xl font-bold leading-none text-foreground">{actualDays}</p>
+            <p className="font-headline text-3xl font-bold leading-none text-foreground">{actualDays}</p>
           </div>
           <div className="absolute inset-0">
             <LiquidFlame days={actualDays} />
