@@ -33,7 +33,6 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
   const { toast } = useToast();
   const formRef = React.useRef<HTMLFormElement>(null);
   
-  // Calcula os dias reais baseado nos dados
   React.useEffect(() => {
     if (partnership.harmonyFlame.lastReset) {
       const now = new Date();
@@ -95,16 +94,16 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center">
-        <div className="relative flex h-16 w-16 items-center justify-center">
-            <div className="absolute inset-0 z-0">
-                <LiquidFlame days={actualDays} />
-            </div>
-            <div className="relative z-10 flex h-full w-full flex-col items-center justify-center text-center pt-6">
-                <p className="font-headline text-4xl text-foreground drop-shadow-sm">{actualDays}</p>
-            </div>
+      <div className="flex flex-col items-center justify-center text-center">
+        <div className="relative mx-auto h-48 w-48">
+          <div className="absolute left-1/2 top-[70%] z-10 -translate-x-1/2 -translate-y-1/2">
+            <p className="font-headline text-7xl font-bold leading-none text-foreground">{actualDays}</p>
+          </div>
+          <div className="absolute inset-0">
+            <LiquidFlame days={actualDays} />
+          </div>
         </div>
-        <p className="text-xs text-muted-foreground whitespace-nowrap">dias de harmonia</p>
+        <p className="mt-4 text-sm font-normal uppercase tracking-widest text-muted-foreground">dias de harmonia</p>
       </div>
 
       <Button variant="outline" size="sm" onClick={() => setIsDialogOpen(true)}>
