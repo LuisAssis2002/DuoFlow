@@ -2,7 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { HarmonyFlame } from './harmony-flame';
-import { Handshake, LogOut, Inbox, Settings } from 'lucide-react';
+import { LogOut, Inbox, Settings } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from './ui/button';
 import {
@@ -24,8 +24,48 @@ export function AppHeader() {
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur-sm">
       <div className="container mx-auto flex h-20 items-center justify-between px-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg instagram-gradient">
-             <Handshake className="h-6 w-6 text-white" />
+          <div className="flex h-10 w-10 items-center justify-center">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <linearGradient id="instagram-gradient-stroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#fdf497" />
+                  <stop offset="45%" stopColor="#fd5949" />
+                  <stop offset="60%" stopColor="#d6249f" />
+                  <stop offset="90%" stopColor="#285aeb" />
+                </linearGradient>
+              </defs>
+              <rect
+                x="1.5"
+                y="1.5"
+                width="21"
+                height="21"
+                rx="5"
+                stroke="url(#instagram-gradient-stroke)"
+                strokeWidth="2"
+              />
+              <path
+                d="M3 5a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .94.68l1.54 4.62a1 1 0 0 0 .94.68h2.58a1 1 0 0 0 .94-.68l1.54-4.62a1 1 0 0 1 .94-.68H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"
+                stroke="url(#instagram-gradient-stroke)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                transform="scale(0.6) translate(4, 3)"
+              />
+              <path
+                d="m12 12 2-10h-4l-2 10"
+                stroke="url(#instagram-gradient-stroke)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                transform="scale(0.6) translate(4, 3)"
+              />
+            </svg>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">DuoFlow</h1>
         </div>
