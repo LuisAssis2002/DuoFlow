@@ -24,7 +24,9 @@ export function AppHeader() {
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur-sm">
       <div className="container mx-auto flex h-20 items-center justify-between px-4">
         <div className="flex items-center gap-3">
-          <Handshake className="h-8 w-8 text-accent" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg instagram-gradient">
+             <Handshake className="h-6 w-6 text-white" />
+          </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">DuoFlow</h1>
         </div>
         {user && (
