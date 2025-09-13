@@ -94,7 +94,7 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center gap-2">
+      <div className="flex flex-col items-center justify-center">
         <div className="relative flex h-16 w-16 items-center justify-center">
             <div className="absolute inset-0 z-0">
                 <LiquidFlame days={actualDays} />
