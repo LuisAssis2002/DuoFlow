@@ -93,7 +93,7 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center text-center mt-2">
+      <div className="flex flex-col items-center justify-center text-center mt-8">
         <button
           onClick={() => setIsDialogOpen(true)}
           className="relative mx-auto h-16 w-16 rounded-full transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
