@@ -56,7 +56,7 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
 
         {/* Preenchimento Líquido */}
         <g clipPath="url(#flame-clip-path)" mask="url(#flame-liquid-mask)">
-          <rect x="1450" y="1450" width="600" height="600" style={{ fill: flameColor, transition: 'fill 1s ease-in-out' }} />
+          <rect x="1400" y="1400" width="600" height="600" style={{ fill: flameColor, transition: 'fill 1s ease-in-out' }} />
         </g>
       </svg>
     </div>
