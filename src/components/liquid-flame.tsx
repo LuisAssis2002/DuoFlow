@@ -25,7 +25,7 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
     <div className="relative w-full h-full">
       <svg
         className="w-full h-full"
-        viewBox="1525 1450 450 600"
+        viewBox="1400 1300 800 800"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
