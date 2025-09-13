@@ -36,6 +36,24 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
     ? differenceInDays(new Date(), new Date(partnership.harmonyFlame.lastReset))
     : 0;
 
+  const [demoDays, setDemoDays] = React.useState(0);
+
+  React.useEffect(() => {
+    setDemoDays(0); // Reset on component mount/update
+    const interval = setInterval(() => {
+      setDemoDays(prev => {
+        if (prev < harmonyDays) {
+          return prev + 1;
+        }
+        clearInterval(interval);
+        return harmonyDays;
+      });
+    }, 50); // Adjust speed of animation here
+
+    return () => clearInterval(interval);
+  }, [harmonyDays]);
+
+
   async function handleReset(formData: FormData) {
     const reason = formData.get('reason') as string;
     if (!reason || reason.length < 10) {
@@ -94,9 +112,9 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
           className="relative mx-auto h-16 w-16 rounded-full transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <div className="font-headline absolute left-1/2 top-[75%] z-10 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold leading-none text-foreground">
-            {harmonyDays}
+            {demoDays}
           </div>
-          <LiquidFlame days={harmonyDays} />
+          <LiquidFlame days={demoDays} />
         </button>
         <h2 className="mt-0 text-[9px] font-normal uppercase tracking-widest text-muted-foreground">
           dias de harmonia
