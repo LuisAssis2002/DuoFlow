@@ -89,3 +89,11 @@ body {
     @apply font-headline;
   }
 }
+
+@keyframes liquid-fill-animation {
+  0% { transform: translateY(105%) translateX(0) rotate(0deg); }
+  30% { transform: translateY(70%) translateX(-15px) rotate(-5deg); }
+  60% { transform: translateY(40%) translateX(15px) rotate(5deg); }
+  90% { transform: translateY(10%) translateX(-5px) rotate(-2deg); }
+  100% { transform: translateY(0%) translateX(0) rotate(0deg); }
+}
