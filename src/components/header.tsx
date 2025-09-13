@@ -26,7 +26,7 @@ export function AppHeader() {
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur-sm">
       <div className="container mx-auto flex h-20 items-center justify-between px-4">
         <div className="flex items-center gap-3">
-          <Image src="/logo.png" alt="DuoFlow Logo" width={40} height={40} />
+          <Image src="/logo.png" alt="DuoFlow Logo" width={48} height={48} />
           <h1 className="text-2xl font-bold tracking-tight text-foreground">DuoFlow</h1>
         </div>
         {user && (
