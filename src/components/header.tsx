@@ -33,7 +33,7 @@ export function AppHeader() {
               xmlns="http://www.w3.org/2000/svg"
             >
               <defs>
-                <linearGradient id="instagram-gradient-stroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#fdf497" />
                   <stop offset="45%" stopColor="#fd5949" />
                   <stop offset="60%" stopColor="#d6249f" />
@@ -46,24 +46,22 @@ export function AppHeader() {
                 width="21"
                 height="21"
                 rx="5"
-                stroke="url(#instagram-gradient-stroke)"
+                stroke="url(#logo-gradient)"
                 strokeWidth="2"
               />
               <path
-                d="M3 5a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .94.68l1.54 4.62a1 1 0 0 0 .94.68h2.58a1 1 0 0 0 .94-.68l1.54-4.62a1 1 0 0 1 .94-.68H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"
-                stroke="url(#instagram-gradient-stroke)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                transform="scale(0.6) translate(4, 3)"
+                  d="M17 11.5a2.5 2.5 0 0 1-5 0V9.3l-3.2 3.2a2.5 2.5 0 0 1-3.53 0L3 10.2V15a2 2 0 0 0 2 2h9.8"
+                  stroke="url(#logo-gradient)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
               />
-              <path
-                d="m12 12 2-10h-4l-2 10"
-                stroke="url(#instagram-gradient-stroke)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                transform="scale(0.6) translate(4, 3)"
+               <path
+                  d="M14.5 9.3 10.2 5 7 8.2"
+                  stroke="url(#logo-gradient)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
               />
             </svg>
           </div>
