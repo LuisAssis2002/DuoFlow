@@ -25,7 +25,7 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
     <div className="relative w-full h-full">
       <svg
         className="w-full h-full"
-        viewBox="1400 1200 800 900"
+        viewBox="1450 1200 800 900"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
@@ -56,7 +56,7 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
 
         {/* Preenchimento Líquido */}
         <g clipPath="url(#flame-clip-path)" mask="url(#flame-liquid-mask)">
-          <rect x="1400" y="1200" width="800" height="900" style={{ fill: flameColor, transition: 'fill 1s ease-in-out' }} />
+          <rect x="1300" y="1300" width="800" height="900" style={{ fill: flameColor, transition: 'fill 1s ease-in-out' }} />
         </g>
       </svg>
     </div>
