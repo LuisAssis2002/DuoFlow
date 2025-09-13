@@ -39,7 +39,7 @@ export function TaskList({ tasks, partnership, onTaskUpdate, onTaskDelete }: Tas
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold mb-4">Concluídas (Últimos 30 dias)</h2>
+        <h2 className="text-xl font-semibold mb-4">Concluídas</h2>
         {completedTasks.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {completedTasks.map((task) => (
