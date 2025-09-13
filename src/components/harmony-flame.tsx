@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Flame, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { differenceInDays } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,10 +28,12 @@ interface HarmonyFlameProps {
 
 export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
   const [actualDays, setActualDays] = React.useState(0);
+  const [simulatedDays, setSimulatedDays] = React.useState(0);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const { toast } = useToast();
   const formRef = React.useRef<HTMLFormElement>(null);
   
+  // Calcula os dias reais baseado nos dados
   React.useEffect(() => {
     if (partnership.harmonyFlame.lastReset) {
       const now = new Date();
@@ -40,6 +42,15 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
       setActualDays(days);
     }
   }, [partnership.harmonyFlame.lastReset]);
+
+  // Simula a animação para visualização
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+        setSimulatedDays(prevDays => (prevDays >= 60 ? 0 : prevDays + 1));
+    }, 200); // Aumenta 1 dia a cada 200ms
+
+    return () => clearInterval(interval);
+  }, []);
 
   async function handleReset(formData: FormData) {
     const reason = formData.get('reason') as string;
@@ -94,7 +105,7 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
   return (
     <>
       <div className="flex items-center gap-3">
-        <LiquidFlame days={actualDays} />
+        <LiquidFlame days={simulatedDays} />
         <div className="text-center w-20">
             <p className="font-headline text-4xl font-bold text-foreground">{actualDays}</p>
             <p className="text-xs text-muted-foreground">dias de harmonia</p>
