@@ -70,11 +70,16 @@ export function Dashboard() {
                     <Users className="h-12 w-12 text-muted-foreground" />
                     <h2 className="mt-4 text-xl font-semibold">Você ainda não está pareado</h2>
                     <p className="mt-2 text-sm text-muted-foreground">
-                        Para usar o DuoFlow, você precisa convidar seu parceiro.
+                        Para usar o DuoFlow, você precisa convidar seu parceiro ou aceitar um convite.
                     </p>
-                    <Button asChild className="mt-6">
-                        <Link href="/pair">Convidar Parceiro</Link>
-                    </Button>
+                    <div className="mt-6 flex gap-4">
+                        <Button asChild>
+                            <Link href="/pair">Convidar Parceiro</Link>
+                        </Button>
+                        <Button variant="outline">
+                            Ver Convites
+                        </Button>
+                    </div>
               </div>
             )}
         </div>
