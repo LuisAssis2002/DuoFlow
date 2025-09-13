@@ -17,8 +17,8 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
   const flameColor = getFlameColor();
   
   // O preenchimento agora é controlado pela altura do `days`.
-  // Chega a 100% (transform Y 0%) com 60 dias.
-  const fillLevel = Math.min(days / 60, 1);
+  // Chega a 100% (transform Y 0%) com 30 dias.
+  const fillLevel = Math.min(days / 30, 1);
   const transformY = 105 - (105 * fillLevel);
 
   return (
