@@ -10,13 +10,13 @@ interface LiquidFlameProps {
 export function LiquidFlame({ days }: LiquidFlameProps) {
   // A cor ainda muda baseada nos dias reais.
   const getFlameColor = () => {
-    if (days >= 60) return 'hsl(48, 97%, 59%)'; // Dourado Final (primary)
+    if (days >= 60) return 'hsl(var(--primary))'; // Dourado Final (primary)
     if (days >= 30) return 'hsl(35, 90%, 55%)'; // Transição para Dourado
     return 'hsl(var(--accent))'; // Laranja inicial (accent)
   };
   const flameColor = getFlameColor();
   
-  // O preenchimento da máscara agora é controlado pela altura do `days`.
+  // O preenchimento agora é controlado pela altura do `days`.
   // Chega a 100% (transform Y 0%) com 60 dias.
   const fillLevel = Math.min(days / 60, 1);
   const transformY = 105 - (105 * fillLevel);
@@ -38,8 +38,9 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
             <path 
                 fill="white"
                 d="M 260,140 C 435,200 685,80 810,140 V 1012 H 260 Z"
-                style={{
-                  animation: `liquid-fill-animation ${Math.max(1.5, 3.5 * fillLevel)}s ease-in-out forwards`,
+                 style={{
+                    transform: `translateY(${transformY}%)`,
+                    transition: 'transform 0.5s ease-out', // Suaviza a subida do líquido
                 }}
             />
           </mask>
