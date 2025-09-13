@@ -96,7 +96,7 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
       <div className="flex flex-col items-center justify-center text-center">
         <button
           onClick={() => setIsDialogOpen(true)}
-          className="relative mx-auto h-16 w-16 rounded-full transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 mt-8"
+          className="relative mx-auto h-16 w-16 rounded-full transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <div className="font-headline absolute left-1/2 top-[75%] z-10 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold leading-none text-foreground">
             {demoDays}
