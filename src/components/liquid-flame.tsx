@@ -37,42 +37,41 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
         }
       `}</style>
 
-      <svg width="100%" height="100%" viewBox="0 0 100 100">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
         <defs>
           <clipPath id="flameClip">
-            {/* Silhueta da chama original */}
-            <path d="M50 0 C-10 40, 10 90, 50 100 C90 90, 110 40, 50 0 Z" />
+            {/* Silhueta da chama do Lucide Icons */}
+            <path d="M14.5 19.5c.3-.2.5-.5.8-.8s.5-.6.8-.9c.4-.4.7-.8.9-1.2s.4-.8.6-1.2c.2-.5.3-.9.4-1.4.1-.5.2-1 .2-1.5s-.1-1-.2-1.5c-.1-.5-.3-1-.5-1.5s-.4-.9-.7-1.4c-.3-.4-.7-.8-1-1.2-1.2-1.2-2.4-2.4-3.2-4.2-.3-.6-.5-1.2-.5-1.8 0-.6.2-1.2.5-1.8.3-.6.7-1.2 1.2-1.8.5-.6 1.1-1.2 1.8-1.8.2-.2.3-.3.4-.4" />
+            <path d="M9.5 19.5c-.3-.2-.5-.5-.8-.8s-.5-.6-.8-.9c-.4-.4-.7-.8-.9-1.2s-.4-.8-.6-1.2c-.2-.5-.3-.9-.4-1.4-.1-.5-.2-1-.2-1.5s.1-1 .2-1.5c.1-.5.3-1 .5-1.5s.4-.9.7-1.4c.3-.4.7-.8 1-1.2 1.2-1.2 2.4-2.4 3.2-4.2.3-.6.5-1.2.5-1.8 0-.6-.2-1.2-.5-1.8-.3-.6-.7-1.2-1.2-1.8-.5-.6-1.1-1.2-1.8-1.8-.2-.2-.3-.3-.4-.4" />
           </clipPath>
         </defs>
         
         {/* Contorno da Chama */}
-        <path 
-          d="M50 0 C-10 40, 10 90, 50 100 C90 90, 110 40, 50 0 Z" 
-          fill="none" 
-          stroke="hsl(var(--border))" 
-          strokeWidth="2" 
-        />
-
+        <g stroke="hsl(var(--border))" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14.5 19.5c.3-.2.5-.5.8-.8s.5-.6.8-.9c.4-.4.7-.8.9-1.2s.4-.8.6-1.2c.2-.5.3-.9.4-1.4.1-.5.2-1 .2-1.5s-.1-1-.2-1.5c-.1-.5-.3-1-.5-1.5s-.4-.9-.7-1.4c-.3-.4-.7-.8-1-1.2-1.2-1.2-2.4-2.4-3.2-4.2-.3-.6-.5-1.2-.5-1.8 0-.6.2-1.2.5-1.8.3-.6.7-1.2 1.2-1.8.5-.6 1.1-1.2 1.8-1.8.2-.2.3-.3.4-.4" />
+            <path d="M9.5 19.5c-.3-.2-.5-.5-.8-.8s-.5-.6-.8-.9c-.4-.4-.7-.8-.9-1.2s-.4-.8-.6-1.2c-.2-.5-.3-.9-.4-1.4-.1-.5-.2-1-.2-1.5s.1-1 .2-1.5c.1-.5.3-1 .5-1.5s.4-.9.7-1.4c.3-.4.7-.8 1-1.2 1.2-1.2 2.4-2.4 3.2-4.2.3-.6.5-1.2.5-1.8 0-.6-.2-1.2-.5-1.8-.3-.6-.7-1.2-1.2-1.8-.5-.6-1.1-1.2-1.8-1.8-.2-.2-.3-.3-.4-.4" />
+        </g>
+        
         {/* Preenchimento com Animação de Onda */}
         <g clipPath="url(#flameClip)">
           {/* Base do líquido */}
           <rect 
-            width="100" 
-            height="100" 
+            width="24" 
+            height="24" 
             fill={flameColor}
-            y={100 - fillPercentage}
+            y={24 - (fillPercentage / 100 * 24)}
             style={{transition: 'y 0.8s ease-out, fill 1s ease-in-out'}}
           />
           
           {/* A Onda Animada */}
-          <g transform={`translate(0, ${100 - fillPercentage})`} style={{ transition: 'transform 0.8s ease-out' }}>
-            <svg
-              viewBox="0 0 800 50"
-              width="200%"
-              x="-50%"
-              y="-10"
-              preserveAspectRatio="none"
-              className="wave"
+          <g transform={`translate(0, ${24 - (fillPercentage / 100 * 24)})`} style={{ transition: 'transform 0.8s ease-out' }}>
+             <svg
+                viewBox="0 0 800 50"
+                width="200%"
+                x="-50%"
+                y="-10"
+                preserveAspectRatio="none"
+                className="wave"
             >
               <path
                 d="M-1600,30c360,0,500-30,800-30s440,30,800,30s500-30,800-30s440,30,800,30V60H-1600V30Z"
