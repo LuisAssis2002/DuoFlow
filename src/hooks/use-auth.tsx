@@ -93,12 +93,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             photoURL: photoBase64,
           });
       }
-      // O onAuthStateChanged vai cuidar de atualizar o estado do usuário
+      // O onAuthStateChanged vai cuidar de atualizar o estado do usuário e setar o loading para false
     } catch (error) {
       console.error("Error signing in with Google: ", error);
       setUser(null);
-    } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -106,10 +105,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(true);
     try {
       await signOut(auth);
-      // onAuthStateChanged will handle setting user to null
+      // onAuthStateChanged will handle setting user to null and loading to false
     } catch (error) {
       console.error("Error signing out: ", error);
-      setLoading(false); // Only set loading false here on error
+      setLoading(false);
     }
   };
 
