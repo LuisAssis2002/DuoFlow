@@ -62,42 +62,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     } else {
                         setPartnership(null);
                     }
+                    setLoading(false); // Stop loading after partnership status is known
                 });
             } else {
                 setPartnership(null);
+                setLoading(false); // Stop loading if no partnership
             }
         });
 
       } else {
         setUser(null);
         setPartnership(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
   const signIn = async () => {
-    setLoading(true);
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
+      // onAuthStateChanged will handle the rest
     } catch (error) {
       console.error("Error signing in with Google: ", error);
-    } finally {
-      // Auth state change will handle this
+      setLoading(false); // Stop loading on error
     }
   };
 
   const logout = async () => {
-    setLoading(true);
     try {
       await signOut(auth);
+      // onAuthStateChanged will handle the rest
     } catch (error) {
       console.error("Error signing out: ", error);
-    } finally {
-      // Auth state change will handle this
     }
   };
 
