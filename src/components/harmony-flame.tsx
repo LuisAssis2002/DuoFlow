@@ -39,16 +39,10 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
   const [demoDays, setDemoDays] = React.useState(0);
 
   React.useEffect(() => {
-    setDemoDays(0); // Reset on component mount/update
+    setDemoDays(0); 
     const interval = setInterval(() => {
-      setDemoDays(prev => {
-        if (prev < harmonyDays) {
-          return prev + 1;
-        }
-        clearInterval(interval);
-        return harmonyDays;
-      });
-    }, 50); // Adjust speed of animation here
+      setDemoDays(prev => (prev + 1) % 100); // Loop up to 100 for demo
+    }, 1000); 
 
     return () => clearInterval(interval);
   }, [harmonyDays]);
