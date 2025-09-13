@@ -28,7 +28,6 @@ interface HarmonyFlameProps {
 
 export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
   const [actualDays, setActualDays] = React.useState(0);
-  const [simulatedDays, setSimulatedDays] = React.useState(0);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const { toast } = useToast();
   const formRef = React.useRef<HTMLFormElement>(null);
@@ -42,15 +41,6 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
       setActualDays(days);
     }
   }, [partnership.harmonyFlame.lastReset]);
-
-  // Simula a animação para visualização
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-        setSimulatedDays(prevDays => (prevDays >= 60 ? 0 : prevDays + 1));
-    }, 200); // Aumenta 1 dia a cada 200ms
-
-    return () => clearInterval(interval);
-  }, []);
 
   async function handleReset(formData: FormData) {
     const reason = formData.get('reason') as string;
@@ -109,7 +99,7 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
             <div className="absolute inset-0 z-0">
                 <LiquidFlame days={actualDays} />
             </div>
-            <div className="relative z-10 flex flex-col items-center justify-center text-center">
+            <div className="relative z-10 flex h-full w-full flex-col items-center justify-center text-center">
                 <p className="font-headline text-3xl font-bold text-foreground drop-shadow-sm">{actualDays}</p>
             </div>
         </div>
