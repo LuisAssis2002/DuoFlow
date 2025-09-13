@@ -1,5 +1,6 @@
 import type { Partnership, Task } from '@/types';
 import { TaskCard } from './task-card';
+import { subDays } from 'date-fns';
 
 interface TaskListProps {
   tasks: Task[];
@@ -13,9 +14,14 @@ export function TaskList({ tasks, partnership, onTaskUpdate, onTaskDelete }: Tas
     .filter((task) => task.status === 'Pendente')
     .sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime());
   
+  const thirtyDaysAgo = subDays(new Date(), 30);
   const completedTasks = tasks
-    .filter((task) => task.status === 'Concluída')
-    .sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
+    .filter((task) => 
+        task.status === 'Concluída' && 
+        task.completedAt && 
+        new Date(task.completedAt) > thirtyDaysAgo
+    )
+    .sort((a, b) => new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime());
 
   return (
     <div className="space-y-8">
@@ -33,7 +39,7 @@ export function TaskList({ tasks, partnership, onTaskUpdate, onTaskDelete }: Tas
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold mb-4">Concluídas</h2>
+        <h2 className="text-xl font-semibold mb-4">Concluídas (Últimos 30 dias)</h2>
         {completedTasks.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {completedTasks.map((task) => (
@@ -41,7 +47,7 @@ export function TaskList({ tasks, partnership, onTaskUpdate, onTaskDelete }: Tas
             ))}
           </div>
         ) : (
-          <p className="text-muted-foreground">Nenhuma tarefa concluída ainda.</p>
+          <p className="text-muted-foreground">Nenhuma tarefa concluída recentemente.</p>
         )}
       </div>
     </div>

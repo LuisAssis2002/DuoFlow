@@ -16,6 +16,7 @@ export type Task = {
   status: 'Pendente' | 'Concluída';
   assignedTo: string; // userId
   createdBy: string; // userId
+  completedAt?: string | null; // ISO string
 };
 
 export type Partnership = {

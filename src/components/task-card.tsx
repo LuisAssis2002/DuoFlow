@@ -31,11 +31,15 @@ export function TaskCard({ task, partnership, onTaskUpdate, onTaskDelete }: Task
 
   const handleToggleStatus = () => {
     const newStatus = task.status === 'Pendente' ? 'Concluída' : 'Pendente';
-    onTaskUpdate({ ...task, status: newStatus });
+    const completedAt = newStatus === 'Concluída' ? new Date().toISOString() : null;
+    onTaskUpdate({ ...task, status: newStatus, completedAt });
   };
 
   const timeText = () => {
     if (task.status === 'Concluída') {
+        if(task.completedAt) {
+            return `Concluída ${formatDistanceToNow(new Date(task.completedAt), { addSuffix: true, locale: ptBR })}`;
+        }
         return 'Concluída';
     }
     const distance = formatDistanceToNow(new Date(task.endDate), { addSuffix: true, locale: ptBR });
