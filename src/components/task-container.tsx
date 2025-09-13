@@ -59,30 +59,32 @@ export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDele
   const handleCloseForm = () => setIsFormOpen(false);
 
   return (
-    <div className="space-y-6 relative pb-20 md:pb-0">
+    <div className="space-y-8 relative pb-20 md:pb-0">
       <Tabs defaultValue="list">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <TabsList>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <TabsList className="self-start">
             <TabsTrigger value="list">Lista</TabsTrigger>
             <TabsTrigger value="calendar">Calendário</TabsTrigger>
           </TabsList>
 
-          <RadioGroup defaultValue="all" onValueChange={(value: Filter) => setFilter(value)} className="flex items-center gap-4">
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="all" id="r-all" />
-              <Label htmlFor="r-all">Todas</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="me" id="r-me" />
-              <Label htmlFor="r-me">Minhas</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="partner" id="r-partner" />
-              <Label htmlFor="r-partner">Dele(a)</Label>
-            </div>
-          </RadioGroup>
+          <div className="flex-grow flex justify-center">
+            <RadioGroup defaultValue="all" onValueChange={(value: Filter) => setFilter(value)} className="flex items-center gap-4 md:gap-6">
+                <div className="flex items-center space-x-2">
+                <RadioGroupItem value="all" id="r-all" />
+                <Label htmlFor="r-all" className="cursor-pointer">Todas</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                <RadioGroupItem value="me" id="r-me" />
+                <Label htmlFor="r-me" className="cursor-pointer">Minhas</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                <RadioGroupItem value="partner" id="r-partner" />
+                <Label htmlFor="r-partner" className="cursor-pointer">Dele(a)</Label>
+                </div>
+            </RadioGroup>
+          </div>
 
-          <Button onClick={handleOpenForm} className="hidden md:inline-flex">
+          <Button onClick={handleOpenForm} className="hidden md:inline-flex shadow-sm hover:shadow-md transition-shadow">
             <PlusCircle className="mr-2 h-4 w-4" />
             Nova Tarefa
           </Button>
@@ -96,8 +98,8 @@ export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDele
         </TabsContent>
       </Tabs>
 
-      <Button onClick={handleOpenForm} className="md:hidden fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg z-30">
-            <Plus className="h-8 w-8" />
+      <Button onClick={handleOpenForm} className="md:hidden fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg z-30 flex items-center justify-center bg-primary hover:bg-primary/90">
+            <Plus className="h-8 w-8 text-primary-foreground" />
       </Button>
 
 

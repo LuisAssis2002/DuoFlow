@@ -1,6 +1,7 @@
 import type { Partnership, Task } from '@/types';
 import { TaskCard } from './task-card';
 import { subDays } from 'date-fns';
+import { ClipboardList } from 'lucide-react';
 
 interface TaskListProps {
   tasks: Task[];
@@ -24,33 +25,39 @@ export function TaskList({ tasks, partnership, onTaskUpdate, onTaskDelete }: Tas
     .sort((a, b) => new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime());
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       <div>
-        <h2 className="text-xl font-semibold mb-4">Pendentes</h2>
+        <h2 className="text-xl font-semibold mb-6">Pendentes</h2>
         {pendingTasks.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {pendingTasks.map((task) => (
               <TaskCard key={task.id} task={task} partnership={partnership} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete} />
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted bg-card p-12 text-center">
-            <p className="text-muted-foreground">Nenhuma tarefa pendente. Hora de relaxar ou criar uma nova!</p>
+          <div className="flex flex-col items-center justify-center rounded-lg bg-card shadow-sm p-12 text-center">
+             <div className="rounded-full bg-secondary p-4">
+                <ClipboardList className="h-10 w-10 text-muted-foreground" />
+             </div>
+            <p className="mt-4 text-base text-muted-foreground">Nenhuma tarefa pendente. Hora de relaxar ou criar uma nova!</p>
           </div>
         )}
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold mb-4">Concluídas (Últimos 30 dias)</h2>
+        <h2 className="text-xl font-semibold mb-6">Concluídas (Últimos 30 dias)</h2>
         {completedTasks.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {completedTasks.map((task) => (
               <TaskCard key={task.id} task={task} partnership={partnership} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete} />
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted bg-card p-12 text-center">
-            <p className="text-muted-foreground">Nenhuma tarefa concluída recentemente.</p>
+           <div className="flex flex-col items-center justify-center rounded-lg bg-card shadow-sm p-12 text-center">
+             <div className="rounded-full bg-secondary p-4">
+                <ClipboardList className="h-10 w-10 text-muted-foreground" />
+             </div>
+            <p className="mt-4 text-base text-muted-foreground">Nenhuma tarefa concluída recentemente.</p>
           </div>
         )}
       </div>

@@ -17,13 +17,15 @@ export function Dashboard() {
     if (!user) {
         return (
             <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
-                 <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted bg-card p-12 text-center">
-                    <Users className="h-12 w-12 text-muted-foreground" />
-                    <h2 className="mt-4 text-xl font-semibold">Bem-vindo ao DuoFlow</h2>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                        Faça login para gerenciar tarefas com seu parceiro.
+                 <div className="flex w-full max-w-md flex-col items-center justify-center rounded-lg bg-card p-12 text-center shadow-sm">
+                    <div className="rounded-full bg-secondary p-4">
+                        <Users className="h-12 w-12 text-primary" />
+                    </div>
+                    <h2 className="mt-6 text-2xl font-bold">Bem-vindo ao DuoFlow</h2>
+                    <p className="mt-2 text-base text-muted-foreground">
+                        Faça login para gerenciar tarefas e harmonia com seu parceiro.
                     </p>
-                    <Button onClick={signIn} className="mt-6">
+                    <Button onClick={signIn} className="mt-8 shadow-md" size="lg">
                         <LogIn className="mr-2" />
                         Login com Google
                     </Button>
@@ -66,14 +68,16 @@ export function Dashboard() {
                     onTaskDelete={handleTaskDelete}
                 />
             ) : (
-                <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted bg-card p-12 text-center h-full">
-                    <Users className="h-12 w-12 text-muted-foreground" />
-                    <h2 className="mt-4 text-xl font-semibold">Você ainda não está pareado</h2>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                        Para usar o DuoFlow, você precisa convidar seu parceiro.
+                <div className="flex flex-col items-center justify-center rounded-lg bg-card shadow-sm p-12 text-center h-full">
+                    <div className="rounded-full bg-secondary p-4">
+                        <Users className="h-12 w-12 text-primary" />
+                    </div>
+                    <h2 className="mt-6 text-2xl font-bold">Você ainda não está pareado</h2>
+                    <p className="mt-2 text-base text-muted-foreground">
+                        Para usar o DuoFlow, você precisa convidar seu parceiro para começar a colaborar.
                     </p>
-                    <div className="mt-6 flex gap-4">
-                        <Button asChild>
+                    <div className="mt-8 flex gap-4">
+                        <Button asChild className="shadow-md">
                             <Link href="/pair">Convidar Parceiro</Link>
                         </Button>
                     </div>

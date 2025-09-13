@@ -47,20 +47,20 @@ export function TaskCard({ task, partnership, onTaskUpdate, onTaskDelete }: Task
   };
 
   return (
-    <Card className={cn("flex flex-col transition-all hover:shadow-lg", task.status === 'Concluída' && 'bg-card/50 opacity-80')}>
-      <CardHeader className="flex-row items-start justify-between">
+    <Card className={cn("flex flex-col transition-all hover:shadow-lg", task.status === 'Concluída' && 'bg-card/60 opacity-70')}>
+      <CardHeader className="flex-row items-start justify-between gap-4">
         <div className="space-y-1.5">
-          <CardTitle className="text-lg font-semibold">{task.title}</CardTitle>
+          <CardTitle className="text-lg leading-tight">{task.title}</CardTitle>
           <CardDescription className={cn("text-xs", isOverdue && "text-destructive font-semibold")}>{timeText()}</CardDescription>
         </div>
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0">
-                    <MoreVertical className="h-4 w-4" />
+                    <MoreVertical className="h-5 w-5" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onTaskDelete(task.id)} className="text-destructive">
+                <DropdownMenuItem onClick={() => onTaskDelete(task.id)} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
                     <Trash2 className="mr-2 h-4 w-4" />
                     Excluir
                 </DropdownMenuItem>
@@ -68,20 +68,20 @@ export function TaskCard({ task, partnership, onTaskUpdate, onTaskDelete }: Task
         </DropdownMenu>
       </CardHeader>
       <CardContent className="flex-grow space-y-4">
-        <p className="text-sm text-muted-foreground">{task.description}</p>
-        <Badge variant={difficultyVariant[task.difficulty]}>{task.difficulty}</Badge>
+        <p className="text-sm text-muted-foreground line-clamp-3">{task.description}</p>
+        <Badge variant={difficultyVariant[task.difficulty]} className="capitalize">{task.difficulty}</Badge>
       </CardContent>
       <CardFooter className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <Avatar className="h-6 w-6">
+          <Avatar className="h-8 w-8">
             <AvatarImage src={assignedUser?.photoURL} alt={assignedUser?.displayName} data-ai-hint="person portrait" />
             <AvatarFallback>{assignedUser?.displayName.charAt(0)}</AvatarFallback>
           </Avatar>
-          <span className="text-xs text-muted-foreground">{assignedUser?.displayName}</span>
+          <span className="text-sm font-medium">{assignedUser?.displayName}</span>
         </div>
-        <Button variant="ghost" size="sm" onClick={handleToggleStatus}>
+        <Button variant="ghost" size="sm" onClick={handleToggleStatus} className="text-muted-foreground">
           {task.status === 'Pendente' ? (
-            <><Circle className="mr-2 h-4 w-4" /> Marcar como concluída</>
+            <><Circle className="mr-2 h-4 w-4" /> Marcar concluída</>
           ) : (
             <><CheckCircle className="mr-2 h-4 w-4 text-green-500" /> Concluída</>
           )}
