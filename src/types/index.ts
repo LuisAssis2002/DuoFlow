@@ -1,4 +1,4 @@
-export type User = {
+export type UserProfile = {
   id: string;
   displayName: string;
   email: string;
@@ -20,7 +20,7 @@ export type Task = {
 
 export type Partnership = {
   id: string;
-  members: [User, User] | [User];
+  members: [UserProfile, UserProfile] | [UserProfile];
   harmonyFlame: {
     lastReset: string; // ISO string
   };

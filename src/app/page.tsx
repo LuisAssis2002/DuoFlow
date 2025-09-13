@@ -1,12 +1,9 @@
 import { Dashboard } from '@/components/dashboard';
-import { getPartnershipData } from '@/lib/data';
 
-export default async function Home() {
-  const partnershipData = await getPartnershipData();
-
+export default function Home() {
   return (
     <main>
-      <Dashboard initialData={partnershipData} />
+      <Dashboard />
     </main>
   );
 }

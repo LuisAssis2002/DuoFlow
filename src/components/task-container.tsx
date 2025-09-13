@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import type { Partnership, Task, User } from '@/types';
+import type { Partnership, Task, UserProfile } from '@/types';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -11,32 +11,49 @@ import { TaskList } from './task-list';
 import { TaskCalendar } from './task-calendar';
 import { TaskForm } from './task-form';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useAuth } from '@/hooks/use-auth';
+import { collection, onSnapshot, query } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 interface TaskContainerProps {
   partnership: Partnership;
-  onTaskAdd: (task: Task) => void;
-  onTaskUpdate: (task: Task) => void;
-  onTaskDelete: (taskId: string) => void;
+  onTaskAdd: (task: Omit<Task, 'id' | 'createdBy'>) => Promise<void>;
+  onTaskUpdate: (task: Task) => Promise<void>;
+  onTaskDelete: (taskId: string) => Promise<void>;
 }
 
 type Filter = 'all' | 'me' | 'partner';
 
 export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDelete }: TaskContainerProps) {
+  const [tasks, setTasks] = React.useState<Task[]>([]);
   const [filter, setFilter] = React.useState<Filter>('all');
   const [isFormOpen, setIsFormOpen] = React.useState(false);
+  const { user } = useAuth();
   
-  // Assuming 'user1' is the current user for demonstration purposes
-  const currentUserId = partnership.members[0].id;
+  React.useEffect(() => {
+    if (!partnership?.id) return;
+    const q = query(collection(db, "partnerships", partnership.id, "tasks"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const tasksData: Task[] = [];
+      querySnapshot.forEach((doc) => {
+        tasksData.push({ id: doc.id, ...doc.data() } as Task);
+      });
+      setTasks(tasksData);
+    });
+
+    return () => unsubscribe();
+  }, [partnership?.id]);
+
 
   const filteredTasks = React.useMemo(() => {
     if (filter === 'me') {
-      return partnership.tasks.filter((task) => task.assignedTo === currentUserId);
+      return tasks.filter((task) => task.assignedTo === user?.uid);
     }
     if (filter === 'partner') {
-      return partnership.tasks.filter((task) => task.assignedTo !== currentUserId);
+      return tasks.filter((task) => task.assignedTo !== user?.uid);
     }
-    return partnership.tasks;
-  }, [partnership.tasks, filter, currentUserId]);
+    return tasks;
+  }, [tasks, filter, user?.uid]);
 
   const handleOpenForm = () => setIsFormOpen(true);
   const handleCloseForm = () => setIsFormOpen(false);

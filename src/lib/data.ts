@@ -1,6 +1,9 @@
 import type { Partnership } from '@/types';
 import { subDays, addDays } from 'date-fns';
 
+// This file is now deprecated in favor of fetching data from Firestore.
+// It is kept for reference but is no longer used in the application.
+
 const now = new Date();
 
 const mockData: Partnership = {
@@ -21,6 +24,7 @@ const mockData: Partnership = {
   ],
   harmonyFlame: {
     lastReset: subDays(now, 27).toISOString(),
+    // history: []
   },
   tasks: [
     {

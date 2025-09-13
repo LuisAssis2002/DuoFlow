@@ -34,8 +34,7 @@ export function PairForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Em um aplicativo real, aqui você enviaria um convite para o e-mail do parceiro
-    // e criaria um registro de parceria pendente no Firestore.
+    // This is a placeholder. Real implementation will use Firebase Functions
     console.log('Convite de pareamento simulado enviado para:', values.email);
 
     toast({
@@ -43,7 +42,6 @@ export function PairForm() {
       description: `Um convite foi enviado para ${values.email}. Você será redirecionado para o painel principal.`,
     });
 
-    // Simula o redirecionamento após o sucesso
     setTimeout(() => {
         router.push('/');
     }, 2000);

@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { useFormState } from 'react-dom';
 import { Flame } from 'lucide-react';
 import { differenceInDays } from 'date-fns';
 import { Button } from '@/components/ui/button';
@@ -16,51 +15,84 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { resetHarmonyFlame, type ResetFormState } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { SubmitButton } from './submit-button';
+import type { Partnership } from '@/types';
+import { db } from '@/lib/firebase';
+import { doc, updateDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { useFormStatus } from 'react-dom';
 
 interface HarmonyFlameProps {
-  lastReset: string;
+  partnership: Partnership;
 }
 
-export function HarmonyFlame({ lastReset }: HarmonyFlameProps) {
+export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
   const [days, setDays] = React.useState(0);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
   const { toast } = useToast();
   const formRef = React.useRef<HTMLFormElement>(null);
-
-  const initialState: ResetFormState = { success: false, message: '' };
-  const [state, formAction] = useFormState(resetHarmonyFlame, initialState);
-
+  
   React.useEffect(() => {
-    const now = new Date();
-    const resetDate = new Date(lastReset);
-    setDays(differenceInDays(now, resetDate));
-  }, [lastReset]);
+    if (partnership.harmonyFlame.lastReset) {
+      const now = new Date();
+      const resetDate = new Date(partnership.harmonyFlame.lastReset);
+      setDays(differenceInDays(now, resetDate));
+    }
+  }, [partnership.harmonyFlame.lastReset]);
 
-  React.useEffect(() => {
-    if (state.success) {
-      toast({
-        title: 'Sucesso!',
-        description: state.message,
-      });
-      setIsDialogOpen(false);
-      formRef.current?.reset();
-      // Em um aplicativo real, os dados seriam atualizados por um listener.
-      // Aqui, podemos apenas reiniciar visualmente os dias.
-      setDays(0);
-    } else if (state.message && (state.error || !state.success)) {
+
+  const flameSize = Math.min(2.5 + days / 10, 6);
+
+  async function handleReset(formData: FormData) {
+    const reason = formData.get('reason') as string;
+    if (!reason || reason.length < 10) {
         toast({
             title: 'Erro',
-            description: state.message,
+            description: 'Por favor, descreva o motivo com mais detalhes (mínimo 10 caracteres).',
+            variant: 'destructive',
+        });
+        return;
+    }
+
+    try {
+        const partnershipRef = doc(db, 'partnerships', partnership.id);
+        await updateDoc(partnershipRef, {
+            'harmonyFlame.lastReset': new Date().toISOString()
+        });
+
+        const resetsRef = collection(db, 'partnerships', partnership.id, 'resets');
+        await addDoc(resetsRef, {
+            reason,
+            timestamp: serverTimestamp(),
+        });
+        
+        toast({
+            title: 'Sucesso!',
+            description: 'A Chama da Harmonia foi reiniciada!',
+        });
+        setIsDialogOpen(false);
+        formRef.current?.reset();
+
+    } catch (error) {
+        console.error(error);
+        toast({
+            title: 'Erro',
+            description: 'Falha ao reiniciar a Chama da Harmonia.',
             variant: 'destructive',
         });
     }
-  }, [state, toast]);
-
-  const flameSize = Math.min(2.5 + days / 10, 6); // A chama cresce lentamente, tamanho máx h-6 w-6
+  }
+  
+  const FormButton = () => {
+    const { pending } = useFormStatus();
+    return (
+         <Button type="submit" disabled={pending} variant="destructive">
+              {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Confirmar Reset
+        </Button>
+    )
+  }
 
   return (
     <>
@@ -98,7 +130,7 @@ export function HarmonyFlame({ lastReset }: HarmonyFlameProps) {
             </DialogDescription>
           </DialogHeader>
 
-          <form action={formAction} ref={formRef} className="grid gap-4 py-4">
+          <form action={handleReset} ref={formRef} className="grid gap-4 py-4">
             <div className="grid w-full gap-1.5">
               <Label htmlFor="reason">Motivo do Reset</Label>
               <Textarea
@@ -107,15 +139,12 @@ export function HarmonyFlame({ lastReset }: HarmonyFlameProps) {
                 name="reason"
                 required
               />
-              {typeof state.error === 'object' && state.error.reason && (
-                <p className="text-sm font-medium text-destructive">{state.error.reason[0]}</p>
-              )}
             </div>
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="outline">Cancelar</Button>
+                <Button type="button" variant="outline">Cancelar</Button>
               </DialogClose>
-              <SubmitButton variant="destructive">Confirmar Reset</SubmitButton>
+              <FormButton />
             </DialogFooter>
           </form>
         </DialogContent>

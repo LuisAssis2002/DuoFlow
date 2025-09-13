@@ -22,13 +22,14 @@ import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import type { Partnership, Task, User } from '@/types';
+import type { Partnership, Task, UserProfile } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
 
 interface TaskFormProps {
   task?: Task;
   partnership: Partnership;
-  onTaskCreated: (task: Task) => void;
+  onTaskCreated: (task: Omit<Task, 'id' | 'createdBy'>) => void;
   onCancel: () => void;
 }
 
@@ -60,6 +61,8 @@ const formSchema = z.object({
 
 export function TaskForm({ task, partnership, onTaskCreated, onCancel }: TaskFormProps) {
   const { toast } = useToast();
+  const { user } = useAuth();
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -67,7 +70,7 @@ export function TaskForm({ task, partnership, onTaskCreated, onCancel }: TaskFor
       description: task?.description ?? '',
       type: task?.type ?? 'Única',
       difficulty: task?.difficulty ?? 'Fácil',
-      assignedTo: task?.assignedTo ?? partnership.members[0].id,
+      assignedTo: task?.assignedTo ?? user?.uid,
       endDate: task ? new Date(task.endDate) : undefined,
       startDate: task?.startDate ? new Date(task.startDate) : undefined,
     },
@@ -76,17 +79,16 @@ export function TaskForm({ task, partnership, onTaskCreated, onCancel }: TaskFor
   const taskType = form.watch('type');
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // In a real app, this would be a server action to create/update in Firestore
-    const newOrUpdatedTask: Task = {
-        id: task?.id ?? crypto.randomUUID(),
+    const newOrUpdatedTask = {
         ...values,
         startDate: values.startDate?.toISOString(),
         endDate: values.endDate.toISOString(),
         status: task?.status ?? 'Pendente',
-        createdBy: partnership.members[0].id, // Mock current user
     };
-
-    onTaskCreated(newOrUpdatedTask);
+    
+    // This is now an incomplete object, the parent will add `createdBy`
+    onTaskCreated(newOrUpdatedTask as Omit<Task, 'id' | 'createdBy'>);
+    
     toast({
       title: 'Sucesso!',
       description: `Tarefa "${values.title}" foi ${task ? 'atualizada' : 'criada'}.`,
@@ -252,7 +254,7 @@ export function TaskForm({ task, partnership, onTaskCreated, onCancel }: TaskFor
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl><SelectTrigger><SelectValue placeholder="Selecione um membro" /></SelectTrigger></FormControl>
                 <SelectContent>
-                  {partnership.members.map((member: User) => (
+                  {partnership.members.map((member: UserProfile) => (
                     <SelectItem key={member.id} value={member.id}>{member.displayName}</SelectItem>
                   ))}
                 </SelectContent>
