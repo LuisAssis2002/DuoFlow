@@ -16,10 +16,9 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { getResetHarmonyFlameAdvice, resetHarmonyFlame, type AdviceFormState } from '@/app/actions';
+import { resetHarmonyFlame, type ResetFormState } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { SubmitButton } from './submit-button';
-import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
 interface HarmonyFlameProps {
   lastReset: string;
@@ -32,46 +31,36 @@ export function HarmonyFlame({ lastReset }: HarmonyFlameProps) {
   const { toast } = useToast();
   const formRef = React.useRef<HTMLFormElement>(null);
 
-  const initialState: AdviceFormState = {};
-  const [state, formAction] = useFormState(getResetHarmonyFlameAdvice, initialState);
+  const initialState: ResetFormState = { success: false, message: '' };
+  const [state, formAction] = useFormState(resetHarmonyFlame, initialState);
 
   React.useEffect(() => {
     const now = new Date();
     const resetDate = new Date(lastReset);
     setDays(differenceInDays(now, resetDate));
   }, [lastReset]);
-  
+
   React.useEffect(() => {
-    if (state.advice) {
-      // Don't clear form on advice received, so user can re-submit
-    } else if (state.error) {
-      // Handle error display if needed
-    }
-  }, [state]);
-
-
-  const handleConfirmReset = async () => {
-    const result = await resetHarmonyFlame();
-    if (result.success) {
+    if (state.success) {
       toast({
         title: 'Sucesso!',
-        description: result.message,
+        description: state.message,
       });
       setIsDialogOpen(false);
       formRef.current?.reset();
-      // In a real app, the data would refetch via a listener.
-      // Here we can just visually reset the days.
+      // Em um aplicativo real, os dados seriam atualizados por um listener.
+      // Aqui, podemos apenas reiniciar visualmente os dias.
       setDays(0);
-    } else {
-      toast({
-        title: 'Erro',
-        description: result.message,
-        variant: 'destructive',
-      });
+    } else if (state.message && (state.error || !state.success)) {
+        toast({
+            title: 'Erro',
+            description: state.message,
+            variant: 'destructive',
+        });
     }
-  };
+  }, [state, toast]);
 
-  const flameSize = Math.min(3 + days / 7, 8); // Flame grows slowly, max size h-8 w-8
+  const flameSize = Math.min(2.5 + days / 10, 6); // A chama cresce lentamente, tamanho máx h-6 w-6
 
   return (
     <>
@@ -105,47 +94,30 @@ export function HarmonyFlame({ lastReset }: HarmonyFlameProps) {
           <DialogHeader>
             <DialogTitle>Resetar a Chama da Harmonia?</DialogTitle>
             <DialogDescription>
-              Esta ação reiniciará a contagem de dias. Antes de decidir, receba um conselho da nossa IA com base nos eventos recentes.
+              Esta ação reiniciará a contagem de dias. Descreva o motivo do reset. Isso será registrado para referência futura.
             </DialogDescription>
           </DialogHeader>
-          
-          {!state?.advice ? (
-            <form action={formAction} ref={formRef} className="grid gap-4 py-4">
-              <div className="grid w-full gap-1.5">
-                <Label htmlFor="recentEvents">Eventos Recentes</Label>
-                <Textarea
-                  placeholder="Descreva brevemente o que aconteceu entre vocês..."
-                  id="recentEvents"
-                  name="recentEvents"
-                  required
-                />
-                 {typeof state.error === 'object' && state.error.recentEvents && (
-                   <p className="text-sm font-medium text-destructive">{state.error.recentEvents[0]}</p>
-                 )}
-              </div>
-              <DialogFooter>
-                <SubmitButton>Obter Conselho</SubmitButton>
-              </DialogFooter>
-            </form>
-          ) : (
-            <div className="space-y-4 py-4">
-               <Alert>
-                <Flame className="h-4 w-4" />
-                <AlertTitle>Conselho da IA</AlertTitle>
-                <AlertDescription>{state.advice}</AlertDescription>
-              </Alert>
-              <DialogFooter className="sm:justify-between">
-                <Button variant="ghost" onClick={() => formAction(new FormData())}>Tentar novamente</Button>
-                <div className="space-x-2">
-                    <DialogClose asChild>
-                        <Button variant="outline">Cancelar</Button>
-                    </DialogClose>
-                    <Button variant="destructive" onClick={handleConfirmReset}>Confirmar Reset</Button>
-                </div>
-              </DialogFooter>
-            </div>
-          )}
 
+          <form action={formAction} ref={formRef} className="grid gap-4 py-4">
+            <div className="grid w-full gap-1.5">
+              <Label htmlFor="reason">Motivo do Reset</Label>
+              <Textarea
+                placeholder="Descreva brevemente o que aconteceu..."
+                id="reason"
+                name="reason"
+                required
+              />
+              {typeof state.error === 'object' && state.error.reason && (
+                <p className="text-sm font-medium text-destructive">{state.error.reason[0]}</p>
+              )}
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Cancelar</Button>
+              </DialogClose>
+              <SubmitButton variant="destructive">Confirmar Reset</SubmitButton>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </>

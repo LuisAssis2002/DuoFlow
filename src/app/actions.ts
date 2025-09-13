@@ -1,49 +1,44 @@
 'use server';
 
-import { getResetHarmonyFlameAdvice as getResetAdvice } from '@/ai/flows/reset-harmony-flame-advice';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
-const ResetFlameAdviceSchema = z.object({
-  recentEvents: z.string().min(10, { message: 'Por favor, descreva os eventos recentes com mais detalhes.' }),
+const ResetFlameSchema = z.object({
+  reason: z.string().min(10, { message: 'Por favor, descreva o motivo com mais detalhes.' }),
 });
 
-export type AdviceFormState = {
-  advice?: string;
+export type ResetFormState = {
+  success: boolean;
+  message: string;
   error?: string | Record<string, string[] | undefined>;
 };
 
-export async function getResetHarmonyFlameAdvice(
-  prevState: AdviceFormState,
+export async function resetHarmonyFlame(
+  prevState: ResetFormState,
   formData: FormData
-): Promise<AdviceFormState> {
-  const validatedFields = ResetFlameAdviceSchema.safeParse({
-    recentEvents: formData.get('recentEvents'),
+): Promise<ResetFormState> {
+  const validatedFields = ResetFlameSchema.safeParse({
+    reason: formData.get('reason'),
   });
 
   if (!validatedFields.success) {
     return {
+      success: false,
+      message: 'Falha na validação.',
       error: validatedFields.error.flatten().fieldErrors,
     };
   }
+  
+  const { reason } = validatedFields.data;
 
   try {
-    const result = await getResetAdvice({ recentEvents: validatedFields.data.recentEvents });
-    return { advice: result.advice };
-  } catch (error) {
-    console.error(error);
-    return { error: 'Falha ao obter conselho da IA. Tente novamente.' };
-  }
-}
-
-export async function resetHarmonyFlame() {
-  try {
-    // In a real app, you would update the timestamp in Firestore here.
-    // For example:
+    // Em um aplicativo real, você salvaria o motivo e atualizaria o timestamp no Firestore aqui.
+    // Por exemplo:
     // const { getFirestore } = await import('firebase-admin/firestore');
     // const db = getFirestore();
+    // await db.collection('partnerships').doc('partner123').collection('resets').add({ reason, timestamp: new Date() });
     // await db.collection('partnerships').doc('partner123').update({ 'harmonyFlame.lastReset': new Date() });
-    console.log('Harmony Flame has been reset in mock action!');
+    console.log('Chama da Harmonia reiniciada em uma ação simulada com o motivo:', reason);
     
     revalidatePath('/');
     return { success: true, message: 'A Chama da Harmonia foi reiniciada!' };
