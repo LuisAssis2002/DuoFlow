@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, Circle, MoreVertical, Trash2 } from 'lucide-react';
+import { CheckCircle, Circle, MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import { formatDistanceToNow, isPast } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -16,6 +16,7 @@ interface TaskCardProps {
   partnership: Partnership;
   onTaskUpdate: (task: Task) => void;
   onTaskDelete: (taskId: string) => void;
+  onEditTask: (task: Task) => void;
 }
 
 const difficultyVariant: Record<Task['difficulty'], 'default' | 'secondary' | 'outline' | 'destructive'> = {
@@ -25,7 +26,7 @@ const difficultyVariant: Record<Task['difficulty'], 'default' | 'secondary' | 'o
   Difícil: 'destructive',
 };
 
-export function TaskCard({ task, partnership, onTaskUpdate, onTaskDelete }: TaskCardProps) {
+export function TaskCard({ task, partnership, onTaskUpdate, onTaskDelete, onEditTask }: TaskCardProps) {
   const assignedUser = partnership.members.find((m) => m.id === task.assignedTo);
   const isOverdue = isPast(new Date(task.endDate)) && task.status === 'Pendente';
 
@@ -60,6 +61,10 @@ export function TaskCard({ task, partnership, onTaskUpdate, onTaskDelete }: Task
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => onEditTask(task)}>
+                    <Pencil className="mr-2 h-4 w-4" />
+                    Editar
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onTaskDelete(task.id)} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
                     <Trash2 className="mr-2 h-4 w-4" />
                     Excluir

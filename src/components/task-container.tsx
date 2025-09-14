@@ -98,7 +98,13 @@ export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDele
         </div>
 
         <TabsContent value="list" className="mt-6">
-          <TaskList tasks={filteredTasks} partnership={partnership} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete} />
+          <TaskList 
+            tasks={filteredTasks} 
+            partnership={partnership} 
+            onTaskUpdate={onTaskUpdate} 
+            onTaskDelete={onTaskDelete} 
+            onEditTask={handleOpenForm}
+          />
         </TabsContent>
         <TabsContent value="calendar" className="mt-6">
           <TaskCalendar

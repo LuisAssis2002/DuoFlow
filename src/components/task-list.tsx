@@ -8,9 +8,10 @@ interface TaskListProps {
   partnership: Partnership;
   onTaskUpdate: (task: Task) => void;
   onTaskDelete: (taskId: string) => void;
+  onEditTask: (task: Task) => void;
 }
 
-export function TaskList({ tasks, partnership, onTaskUpdate, onTaskDelete }: TaskListProps) {
+export function TaskList({ tasks, partnership, onTaskUpdate, onTaskDelete, onEditTask }: TaskListProps) {
   const pendingTasks = tasks
     .filter((task) => task.status === 'Pendente')
     .sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime());
@@ -31,7 +32,14 @@ export function TaskList({ tasks, partnership, onTaskUpdate, onTaskDelete }: Tas
         {pendingTasks.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {pendingTasks.map((task) => (
-              <TaskCard key={task.id} task={task} partnership={partnership} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete} />
+              <TaskCard 
+                key={task.id} 
+                task={task} 
+                partnership={partnership} 
+                onTaskUpdate={onTaskUpdate} 
+                onTaskDelete={onTaskDelete}
+                onEditTask={onEditTask}
+              />
             ))}
           </div>
         ) : (
@@ -49,7 +57,14 @@ export function TaskList({ tasks, partnership, onTaskUpdate, onTaskDelete }: Tas
         {completedTasks.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {completedTasks.map((task) => (
-              <TaskCard key={task.id} task={task} partnership={partnership} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete} />
+              <TaskCard 
+                key={task.id} 
+                task={task} 
+                partnership={partnership} 
+                onTaskUpdate={onTaskUpdate} 
+                onTaskDelete={onTaskDelete}
+                onEditTask={onEditTask}
+              />
             ))}
           </div>
         ) : (
