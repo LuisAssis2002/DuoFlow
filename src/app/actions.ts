@@ -21,25 +21,24 @@ export async function resetHarmonyFlame(
 }
 
 
-export async function sendTaskReminders() {
+export async function sendTaskReminders(vapidKeys: { subject: string, publicKey: string, privateKey: string }) {
   console.log('Checking for task reminders to send...');
-  if (
-    !process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ||
-    !process.env.VAPID_PRIVATE_KEY ||
-    !process.env.VAPID_SUBJECT
-  ) {
-    console.error('VAPID keys not configured. Skipping notifications.');
-    return { success: false, message: 'VAPID keys not configured.' };
+  
+  const { subject, publicKey, privateKey } = vapidKeys;
+  
+  if (!publicKey || !privateKey || !subject) {
+    console.error('VAPID keys not provided. Skipping notifications.');
+    return { success: false, message: 'VAPID keys not provided.' };
   }
 
-  // Moved VAPID details setup inside the function to ensure env vars are loaded.
-  webpush.setVapidDetails(
-    process.env.VAPID_SUBJECT,
-    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
-  );
-
   try {
+    // Moved VAPID details setup inside the function to ensure env vars are loaded.
+    webpush.setVapidDetails(
+      subject,
+      publicKey,
+      privateKey
+    );
+
     const today = new Date();
     const partnershipsSnapshot = await getDocs(collection(db, 'partnerships'));
 
@@ -76,6 +75,9 @@ export async function sendTaskReminders() {
     return { success: true, message: 'Reminders checked and sent.' };
   } catch (error) {
     console.error('Error sending task reminders:', error);
-    return { success: false, message: 'Failed to send reminders.' };
+    if (error instanceof Error) {
+        return { success: false, message: `Failed to send reminders: ${error.message}` };
+    }
+    return { success: false, message: 'Failed to send reminders due to an unknown error.' };
   }
 }

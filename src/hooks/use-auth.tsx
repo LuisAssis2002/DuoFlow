@@ -56,7 +56,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
      // Roda a verificação de tarefas uma vez ao carregar a aplicação se o usuário estiver logado
-    sendTaskReminders();
+    const vapidKeys = {
+      publicKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '',
+      privateKey: process.env.VAPID_PRIVATE_KEY || '',
+      subject: process.env.VAPID_SUBJECT || ''
+    };
+    if (vapidKeys.publicKey) {
+      sendTaskReminders(vapidKeys);
+    }
     
     // Listener for user's partnership
     const userDocRef = doc(db, 'users', user.uid);
