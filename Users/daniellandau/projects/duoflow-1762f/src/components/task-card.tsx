@@ -21,13 +21,6 @@ interface TaskCardProps {
   onEditTask: (task: Task) => void;
 }
 
-const difficultyVariant: Record<Task['difficulty'], 'default' | 'secondary' | 'outline' | 'destructive'> = {
-  Rotineira: 'outline',
-  Fácil: 'secondary',
-  Média: 'default',
-  Difícil: 'destructive',
-};
-
 const difficultyColorClasses: Record<Task['difficulty'], string> = {
   Rotineira: 'bg-blue-100 text-blue-800 border-blue-200',
   Fácil: 'bg-green-100 text-green-800 border-green-200',
