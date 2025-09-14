@@ -2,7 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { HarmonyFlame } from './harmony-flame';
-import { LogOut, Bell, BellOff } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from './ui/button';
 import {
@@ -17,6 +17,8 @@ import { InvitationsDropdown } from './invitations-dropdown';
 import { Inbox } from 'lucide-react';
 import Image from 'next/image';
 import { usePushNotifications } from '@/hooks/use-push-notifications';
+import { Switch } from './ui/switch';
+import { Label } from './ui/label';
 
 export function AppHeader() {
   const { user, partnership, logout, invitations } = useAuth();
@@ -24,7 +26,6 @@ export function AppHeader() {
     isSubscribed,
     subscribe,
     unsubscribe,
-    permissionStatus,
     isSupported,
   } = usePushNotifications();
 
@@ -56,29 +57,6 @@ export function AppHeader() {
         )}
         {user && (
            <div className="flex items-center gap-2 md:gap-4">
-
-            {isSupported && permissionStatus === 'granted' && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleNotificationToggle}
-                title={isSubscribed ? "Desativar Notificações" : "Ativar Notificações"}
-              >
-                {isSubscribed ? <Bell className="h-5 w-5" /> : <BellOff className="h-5 w-5 text-muted-foreground" />}
-              </Button>
-            )}
-
-            {isSupported && permissionStatus !== 'granted' && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleNotificationToggle}
-                title="Ativar Notificações"
-              >
-                <BellOff className="h-5 w-5" />
-              </Button>
-            )}
-            
             {!partnership ? (
               <InvitationsDropdown>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
@@ -116,6 +94,18 @@ export function AppHeader() {
                       </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  {isSupported && (
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                        <div className="flex items-center justify-between w-full">
+                           <Label htmlFor="notifications-switch" className="font-normal">Notificações</Label>
+                           <Switch
+                             id="notifications-switch"
+                             checked={isSubscribed}
+                             onCheckedChange={handleNotificationToggle}
+                           />
+                        </div>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={logout} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Sair</span>
