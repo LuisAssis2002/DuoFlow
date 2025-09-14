@@ -11,7 +11,7 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
   // O preenchimento agora é controlado pela altura do `days`.
   // Chega a 100% (transform Y 0%) com 30 dias.
   const fillLevel = Math.min(days / 30, 1);
-  const transformY = 100 - (134 * fillLevel);
+  const transformY = 100 - (140 * fillLevel);
 
   return (
     <div className="relative w-full h-full">
