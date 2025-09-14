@@ -8,18 +8,6 @@ import webpush from 'web-push';
 import type { Task, UserProfile } from '@/types';
 import { subDays, isToday } from 'date-fns';
 
-if (
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY &&
-  process.env.VAPID_PRIVATE_KEY &&
-  process.env.VAPID_SUBJECT
-) {
-  webpush.setVapidDetails(
-    process.env.VAPID_SUBJECT,
-    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
-  );
-}
-
 // This action is not used directly by forms anymore.
 export async function resetHarmonyFlame(
   prevState: any,
@@ -43,6 +31,13 @@ export async function sendTaskReminders() {
     console.error('VAPID keys not configured. Skipping notifications.');
     return { success: false, message: 'VAPID keys not configured.' };
   }
+
+  // Moved VAPID details setup inside the function to ensure env vars are loaded.
+  webpush.setVapidDetails(
+    process.env.VAPID_SUBJECT,
+    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY
+  );
 
   try {
     const today = new Date();
