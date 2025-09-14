@@ -32,7 +32,7 @@ export function AppHeader() {
         {/* Mobile Header: Compact */}
         <div className="flex md:hidden items-center justify-between w-full">
           <div className="flex-1 flex justify-start">
-            <Image src="/logo.png" alt="DuoFlow Logo" width={32} height={32} />
+            {/* Logo removed for cleaner mobile view */}
           </div>
           <div className="flex-1 flex justify-center">
             {user && partnership && <HarmonyFlame partnership={partnership} />}
