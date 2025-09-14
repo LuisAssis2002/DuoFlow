@@ -97,7 +97,7 @@ export function AppHeader() {
                   {isSupported && (
                     <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                         <div className="flex items-center justify-between w-full">
-                           <Label htmlFor="notifications-switch" className="font-normal">Notificações</Label>
+                           <Label htmlFor="notifications-switch" className="font-normal cursor-pointer">Notificações</Label>
                            <Switch
                              id="notifications-switch"
                              checked={isSubscribed}
