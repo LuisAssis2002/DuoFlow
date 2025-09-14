@@ -90,7 +90,6 @@ export function AppHeader() {
         {/* Desktop Header: Full */}
         <div className="hidden md:flex items-center gap-4">
           <Image src="/logo.png" alt="DuoFlow Logo" width={40} height={40} />
-          <h1 className="text-2xl font-bold tracking-tighter text-primary">DuoFlow</h1>
         </div>
         {user && (
            <div className="hidden md:flex flex-grow items-center justify-center">
