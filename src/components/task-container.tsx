@@ -69,12 +69,12 @@ export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDele
     <div className="space-y-8 relative pb-20 md:pb-0">
       <Tabs defaultValue="list">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <TabsList className="self-start">
+          <TabsList className="self-start md:self-center">
             <TabsTrigger value="list">Lista</TabsTrigger>
             <TabsTrigger value="calendar">Calendário</TabsTrigger>
           </TabsList>
 
-          <div className="flex-grow flex justify-center">
+          <div className="flex-grow flex justify-start md:justify-center">
             <RadioGroup defaultValue="all" onValueChange={(value: Filter) => setFilter(value)} className="flex items-center gap-4 md:gap-6">
                 <div className="flex items-center space-x-2">
                 <RadioGroupItem value="all" id="r-all" />
