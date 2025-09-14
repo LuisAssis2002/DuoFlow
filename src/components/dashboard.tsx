@@ -40,10 +40,11 @@ export function Dashboard() {
         await updateDoc(taskRef, updatedTask);
     };
 
-    const handleTaskAdd = async (newTask: Omit<Task, 'id' | 'createdBy'>) => {
+    const handleTaskAdd = async (newTask: Omit<Task, 'id' | 'createdBy' | 'status'>) => {
         if (!partnership || !user) return;
         await addDoc(collection(db, 'partnerships', partnership.id, 'tasks'), {
             ...newTask,
+            status: 'Pendente',
             createdBy: user.uid
         });
     };

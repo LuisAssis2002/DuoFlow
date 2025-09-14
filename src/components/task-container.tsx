@@ -17,7 +17,7 @@ import { db } from '@/lib/firebase';
 
 interface TaskContainerProps {
   partnership: Partnership;
-  onTaskAdd: (task: Omit<Task, 'id' | 'createdBy'>) => Promise<void>;
+  onTaskAdd: (task: Omit<Task, 'id' | 'createdBy' | 'status'>) => Promise<void>;
   onTaskUpdate: (task: Task) => Promise<void>;
   onTaskDelete: (taskId: string) => Promise<void>;
 }
