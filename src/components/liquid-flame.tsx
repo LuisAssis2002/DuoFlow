@@ -7,12 +7,6 @@ interface LiquidFlameProps {
 }
 
 export function LiquidFlame({ days }: LiquidFlameProps) {
-  // A cor ainda muda baseada nos dias reais.
-  const getFlameColor = () => {
-    if (days >= 30) return 'hsl( 258, 90%, 66%)'; // Transição para Dourado
-    return 'hsl(var(--accent))'; // Laranja inicial (accent)
-  };
-  const flameColor = getFlameColor();
   
   // O preenchimento agora é controlado pela altura do `days`.
   // Chega a 100% (transform Y 0%) com 30 dias.
@@ -27,6 +21,18 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
+          {/* Gradiente para a chama normal (< 30 dias) */}
+          <linearGradient id="flame-gradient" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" style={{ stopColor: '#FFB800' }} />
+            <stop offset="100%" style={{ stopColor: '#FF4D00' }} />
+          </linearGradient>
+
+          {/* Gradiente para a chama dourada (>= 30 dias) */}
+          <linearGradient id="gold-gradient" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" style={{ stopColor: '#FFA500' }} />
+            <stop offset="100%" style={{ stopColor: '#FFD700' }} />
+          </linearGradient>
+
           <clipPath id="flame-clip-path">
             {/* Este é o contorno da chama que serve de janela */}
             <path d="M1899.563,1775.46c-26.575,61.632-77.322,114.713-180.067,119.631c15.476-2.888,30.816-8.843,48.457-20.394    c29.124-19.074,53.104-51.469,59.105-89.887s-9.012-81.935-38.96-99.181c4.839,16.604-5.369,36.839-20.134,39.873    c-14.765,3.023-30.274-11.922-30.545-29.451c-0.248-15.543,9.339-28.616,13.941-43.178c6.339-20.044,2.515-44.002-9.599-60.019    c-10.682-14.122-26.575-21.668-37.459-35.564c-10.885-13.908-13.648-40.347,0.801-48.705c-23.033,8.877-38.734,38.542-35.26,66.64    c1.399,11.234,5.392,23.135,1.365,33.478c-5.617,14.381-24.398,15.431-34.764,5.279c-10.355-10.163-13.896-26.958-15.115-42.716    c-14.957,13.22-21.07,38.542-14.257,58.958c6.959,20.8,25.774,38.283,22.006,60.165c-3.452,20.044-25.864,28.898-42.186,21.589    c-16.31-7.32-27.161-25.356-35.519-43.291c-15.002,52.021-6.948,112.344,20.867,156.538c20.427,32.44,44.306,56.229,76.938,66.595    c-118.842-16.773-169.983-88.533-191.696-152.556c-28.266-83.311-22.311-136.866,8.753-195.114    c-1.557,22.582-2.82,46.641,8.189,66.425c10.998,19.796,39.253,31.639,57.063,17.653c13.4-10.524,15.137-30.692,10.106-46.979    c-5.042-16.288-15.374-30.342-22.694-45.728c-19.694-41.43-15.746-93.169,10.027-131.114c3.519,22.886,7.625,47.092,22.751,64.621    c15.126,17.54,45.299,24.172,61.135,7.286c15.092-16.119,9.272-41.644,5.583-63.414c-13.716-80.739,20.089-167.626,84.202-218.395    c-24.42,22.401-20.19,66.876-0.169,95.154c21.736,30.703,58.112,47.995,82.172,76.904c84.202,101.2-47.205,212.033,23.811,246.312    c39.072,21.262,74.784-33.41,64.891-85.341C1931.078,1599.25,1936.007,1690.886,1899.563,1775.46z"/>
@@ -54,9 +60,12 @@ export function LiquidFlame({ days }: LiquidFlameProps) {
 
         {/* Preenchimento Líquido */}
         <g clipPath="url(#flame-clip-path)" mask="url(#flame-liquid-mask)">
-          <rect x="1450" y="1200" width="500" height="600" style={{ fill: flameColor, transition: 'fill 1s ease-in-out' }} />
+          <rect x="1450" y="1200" width="500" height="600" 
+            fill={days >= 30 ? "url(#gold-gradient)" : "url(#flame-gradient)"} 
+          />
         </g>
       </svg>
     </div>
   );
 }
+

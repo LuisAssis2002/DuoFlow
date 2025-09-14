@@ -33,6 +33,7 @@ interface TaskCalendarProps {
   partnership: Partnership;
   onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
+  onDayClick: (day: Date) => void;
 }
 
 const difficultyColors: Record<Task['difficulty'], string> = {
@@ -42,7 +43,7 @@ const difficultyColors: Record<Task['difficulty'], string> = {
   Difícil: 'bg-red-400',
 };
 
-export function TaskCalendar({ tasks, partnership, onEditTask, onDeleteTask }: TaskCalendarProps) {
+export function TaskCalendar({ tasks, partnership, onEditTask, onDeleteTask, onDayClick }: TaskCalendarProps) {
   const [currentDate, setCurrentDate] = React.useState(new Date());
 
   const firstDayOfMonth = startOfMonth(currentDate);
@@ -80,6 +81,7 @@ export function TaskCalendar({ tasks, partnership, onEditTask, onDeleteTask }: T
       <div className="grid grid-cols-7 grid-rows-5 gap-px">
         {days.map((day) => {
           const tasksForDay = tasks.filter((task) => {
+            if (!task.endDate) return false;
             const taskEndDate = new Date(task.endDate);
             if (task.type === 'Progressiva' && task.startDate) {
                 const taskStartDate = new Date(task.startDate);
@@ -89,68 +91,34 @@ export function TaskCalendar({ tasks, partnership, onEditTask, onDeleteTask }: T
           });
           
           return (
-            <div
+            <button
               key={day.toString()}
+              onClick={() => onDayClick(day)}
               className={cn(
-                'relative flex h-28 flex-col border border-transparent bg-card p-2',
+                'relative flex h-28 flex-col border border-transparent bg-card p-2 text-left transition-colors hover:bg-secondary focus:z-10 focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent',
                 !isSameMonth(day, currentDate) && 'text-muted-foreground opacity-50',
               )}
             >
               <span className="font-semibold">{format(day, 'd')}</span>
               <div className="mt-1 flex-grow space-y-1 overflow-y-auto">
-                {tasksForDay.map(task => {
-                    const assignedUser = partnership.members.find(m => m.id === task.assignedTo);
+                {tasksForDay.slice(0, 3).map(task => { // Limita a 3 tarefas para não sobrecarregar
                     return (
-                        <Popover key={task.id}>
-                            <div className={cn(
-                                "flex w-full items-center gap-2 rounded-md p-1 text-xs",
-                                task.status === 'Concluída' ? 'bg-muted/60' : 'bg-secondary'
-                            )}>
-                                <PopoverTrigger asChild>
-                                    <div className="flex-grow flex items-center gap-2 cursor-pointer">
-                                        <div className={cn("h-2 w-2 flex-shrink-0 rounded-full", difficultyColors[task.difficulty])} />
-                                        <p className="truncate">{task.title}</p>
-                                    </div>
-                                </PopoverTrigger>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-6 w-6 flex-shrink-0">
-                                            <MoreVertical className="h-4 w-4" />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                        <DropdownMenuItem onClick={() => onEditTask(task)}>
-                                            <Pencil className="mr-2 h-4 w-4" />
-                                            Editar
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => onDeleteTask(task.id)} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
-                                            <Trash2 className="mr-2 h-4 w-4" />
-                                            Excluir
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </div>
-                            <PopoverContent className="w-80">
-                                <div className="space-y-4">
-                                    <h4 className="font-semibold leading-none">{task.title}</h4>
-                                    <p className="text-sm text-muted-foreground">{task.description}</p>
-                                    <div className="flex items-center justify-between">
-                                        <Badge variant={task.status === 'Concluída' ? 'secondary' : 'default'}>{task.status}</Badge>
-                                        <div className="flex items-center gap-2">
-                                            <Avatar className="h-6 w-6">
-                                                <AvatarImage src={assignedUser?.photoURL} data-ai-hint="person portrait" />
-                                                <AvatarFallback>{assignedUser?.displayName.charAt(0)}</AvatarFallback>
-                                            </Avatar>
-                                            <span className="text-xs text-muted-foreground">{assignedUser?.displayName}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </PopoverContent>
-                        </Popover>
+                        <div key={task.id} className={cn(
+                            "flex w-full items-center gap-2 rounded-md p-1 text-xs",
+                            task.status === 'Concluída' ? 'bg-muted/60' : 'bg-secondary'
+                        )}>
+                            <div className={cn("h-2 w-2 flex-shrink-0 rounded-full", difficultyColors[task.difficulty])} />
+                            <p className="truncate">{task.title}</p>
+                        </div>
                     )
                 })}
+                {tasksForDay.length > 3 && (
+                     <div className="text-xs text-muted-foreground mt-1">
+                        + {tasksForDay.length - 3} mais
+                    </div>
+                )}
               </div>
-            </div>
+            </button>
           );
         })}
       </div>

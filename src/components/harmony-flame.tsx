@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -82,12 +81,17 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
           onClick={() => setIsDialogOpen(true)}
           className="relative mx-auto h-[50px] w-[50px] rounded-full transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
-          <div className="font-headline absolute mt-1 left-1/2 top-3/4 z-10 -translate-x-1/2 -translate-y-1/2 text-4xl font-bold leading-none text-foreground">
+          {/* NÚMERO COM SOMBRA PARA MELHORAR LEGIBILIDADE */}
+          <div 
+            className="font-headline absolute mt-1 left-1/2 top-3/4 z-10 -translate-x-1/2 -translate-y-1/2 text-4xl font-bold leading-none text-foreground"
+            style={{ textShadow: '0px 2px 5px rgba(0, 0, 0, 0.25)' }}
+          >
             {harmonyDays}
           </div>
           <LiquidFlame days={harmonyDays} />
         </button>
-        <h2 className="mt-2 text-sm font-medium uppercase tracking-wider text-muted-foreground">
+        {/* TEXTO DE APOIO REFINADO */}
+        <h2 className="mt-2 text-sm font-medium uppercase tracking-wider text-slate-600">
           dias de harmonia
         </h2>
       </div>
