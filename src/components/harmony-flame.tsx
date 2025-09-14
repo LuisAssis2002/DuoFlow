@@ -2,7 +2,6 @@
 'use client';
 
 import * as React from 'react';
-import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -19,9 +18,9 @@ import { useToast } from '@/hooks/use-toast';
 import type { Partnership } from '@/types';
 import { db } from '@/lib/firebase';
 import { doc, updateDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { useFormStatus } from 'react-dom';
 import { LiquidFlame } from './liquid-flame';
 import { differenceInDays } from 'date-fns';
+import { SubmitButton } from './submit-button';
 
 interface HarmonyFlameProps {
   partnership: Partnership;
@@ -75,16 +74,6 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
         });
     }
   }
-  
-  const FormButton = () => {
-    const { pending } = useFormStatus();
-    return (
-         <Button type="submit" disabled={pending} variant="destructive">
-              {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Confirmar Reset
-        </Button>
-    )
-  }
 
   return (
     <>
@@ -93,7 +82,7 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
           onClick={() => setIsDialogOpen(true)}
           className="relative mx-auto h-16 w-16 rounded-full transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
-          <div className="font-headline absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold leading-none text-foreground">
+          <div className="font-headline absolute left-1/2 top-[52%] z-10 -translate-x-1/2 -translate-y-1/2 text-4xl font-bold leading-none text-foreground">
             {harmonyDays}
           </div>
           <LiquidFlame days={harmonyDays} />
@@ -126,7 +115,7 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
               <DialogClose asChild>
                 <Button type="button" variant="outline">Cancelar</Button>
               </DialogClose>
-              <FormButton />
+              <SubmitButton variant="destructive">Confirmar Reset</SubmitButton>
             </DialogFooter>
           </form>
         </DialogContent>

@@ -17,14 +17,22 @@ import {
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface TaskCalendarProps {
   tasks: Task[];
   partnership: Partnership;
+  onEditTask: (task: Task) => void;
+  onDeleteTask: (taskId: string) => void;
 }
 
 const difficultyColors: Record<Task['difficulty'], string> = {
@@ -34,7 +42,7 @@ const difficultyColors: Record<Task['difficulty'], string> = {
   Difícil: 'bg-red-400',
 };
 
-export function TaskCalendar({ tasks, partnership }: TaskCalendarProps) {
+export function TaskCalendar({ tasks, partnership, onEditTask, onDeleteTask }: TaskCalendarProps) {
   const [currentDate, setCurrentDate] = React.useState(new Date());
 
   const firstDayOfMonth = startOfMonth(currentDate);
@@ -94,15 +102,34 @@ export function TaskCalendar({ tasks, partnership }: TaskCalendarProps) {
                     const assignedUser = partnership.members.find(m => m.id === task.assignedTo);
                     return (
                         <Popover key={task.id}>
-                            <PopoverTrigger asChild>
-                                <div className={cn(
-                                    "flex w-full cursor-pointer items-center gap-2 rounded-md p-1 text-xs",
-                                    task.status === 'Concluída' ? 'bg-muted/60' : 'bg-secondary'
-                                )}>
-                                    <div className={cn("h-2 w-2 flex-shrink-0 rounded-full", difficultyColors[task.difficulty])} />
-                                    <p className="truncate">{task.title}</p>
-                                </div>
-                            </PopoverTrigger>
+                            <div className={cn(
+                                "flex w-full items-center gap-2 rounded-md p-1 text-xs",
+                                task.status === 'Concluída' ? 'bg-muted/60' : 'bg-secondary'
+                            )}>
+                                <PopoverTrigger asChild>
+                                    <div className="flex-grow flex items-center gap-2 cursor-pointer">
+                                        <div className={cn("h-2 w-2 flex-shrink-0 rounded-full", difficultyColors[task.difficulty])} />
+                                        <p className="truncate">{task.title}</p>
+                                    </div>
+                                </PopoverTrigger>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-6 w-6 flex-shrink-0">
+                                            <MoreVertical className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem onClick={() => onEditTask(task)}>
+                                            <Pencil className="mr-2 h-4 w-4" />
+                                            Editar
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => onDeleteTask(task.id)} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                                            <Trash2 className="mr-2 h-4 w-4" />
+                                            Excluir
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
                             <PopoverContent className="w-80">
                                 <div className="space-y-4">
                                     <h4 className="font-semibold leading-none">{task.title}</h4>

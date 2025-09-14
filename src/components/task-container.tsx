@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import type { Partnership, Task, UserProfile } from '@/types';
+import type { Partnership, Task } from '@/types';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Plus } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { TaskList } from './task-list';
 import { TaskCalendar } from './task-calendar';
 import { TaskForm } from './task-form';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/use-auth';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -28,6 +28,7 @@ export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDele
   const [tasks, setTasks] = React.useState<Task[]>([]);
   const [filter, setFilter] = React.useState<Filter>('all');
   const [isFormOpen, setIsFormOpen] = React.useState(false);
+  const [editingTask, setEditingTask] = React.useState<Task | undefined>(undefined);
   const { user } = useAuth();
   
   React.useEffect(() => {
@@ -44,7 +45,6 @@ export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDele
     return () => unsubscribe();
   }, [partnership?.id]);
 
-
   const filteredTasks = React.useMemo(() => {
     if (filter === 'me') {
       return tasks.filter((task) => task.assignedTo === user?.uid);
@@ -55,8 +55,15 @@ export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDele
     return tasks;
   }, [tasks, filter, user?.uid]);
 
-  const handleOpenForm = () => setIsFormOpen(true);
-  const handleCloseForm = () => setIsFormOpen(false);
+  const handleOpenForm = (task?: Task) => {
+    setEditingTask(task);
+    setIsFormOpen(true);
+  };
+  
+  const handleCloseForm = () => {
+    setEditingTask(undefined);
+    setIsFormOpen(false);
+  };
 
   return (
     <div className="space-y-8 relative pb-20 md:pb-0">
@@ -84,7 +91,7 @@ export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDele
             </RadioGroup>
           </div>
 
-          <Button onClick={handleOpenForm} className="hidden md:inline-flex shadow-sm hover:shadow-md transition-shadow">
+          <Button onClick={() => handleOpenForm()} className="hidden md:inline-flex shadow-sm hover:shadow-md transition-shadow">
             <PlusCircle className="mr-2 h-4 w-4" />
             Nova Tarefa
           </Button>
@@ -94,24 +101,36 @@ export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDele
           <TaskList tasks={filteredTasks} partnership={partnership} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete} />
         </TabsContent>
         <TabsContent value="calendar" className="mt-6">
-          <TaskCalendar tasks={filteredTasks} partnership={partnership} />
+          <TaskCalendar
+            tasks={filteredTasks}
+            partnership={partnership}
+            onEditTask={handleOpenForm}
+            onDeleteTask={onTaskDelete}
+          />
         </TabsContent>
       </Tabs>
 
-      <Button onClick={handleOpenForm} className="md:hidden fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg z-30 flex items-center justify-center bg-primary hover:bg-primary/90">
+      <Button onClick={() => handleOpenForm()} className="md:hidden fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg z-30 flex items-center justify-center bg-primary hover:bg-primary/90">
             <Plus className="h-8 w-8 text-primary-foreground" />
       </Button>
-
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Criar Nova Tarefa</DialogTitle>
+            <DialogTitle>{editingTask ? 'Editar Tarefa' : 'Criar Nova Tarefa'}</DialogTitle>
+            <DialogDescription>
+              {editingTask ? 'Altere os detalhes da tarefa abaixo.' : 'Preencha os detalhes da nova tarefa para seu parceiro.'}
+            </DialogDescription>
           </DialogHeader>
           <TaskForm
+            task={editingTask}
             partnership={partnership}
-            onTaskCreated={(newTask) => {
-              onTaskAdd(newTask);
+            onSubmit={(data) => {
+              if (editingTask) {
+                onTaskUpdate({ ...editingTask, ...data });
+              } else {
+                onTaskAdd(data);
+              }
               handleCloseForm();
             }}
             onCancel={handleCloseForm}

@@ -22,14 +22,14 @@ import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import type { Partnership, Task, UserProfile } from '@/types';
+import type { Partnership, Task } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
 
 interface TaskFormProps {
   task?: Task;
   partnership: Partnership;
-  onTaskCreated: (task: Omit<Task, 'id' | 'createdBy'>) => void;
+  onSubmit: (data: Omit<Task, 'id' | 'createdBy' | 'status' | 'completedAt'>) => void;
   onCancel: () => void;
 }
 
@@ -59,11 +59,13 @@ const formSchema = z.object({
     path: ["endDate"],
 });
 
-export function TaskForm({ task, partnership, onTaskCreated, onCancel }: TaskFormProps) {
+type FormValues = z.infer<typeof formSchema>;
+
+export function TaskForm({ task, partnership, onSubmit, onCancel }: TaskFormProps) {
   const { toast } = useToast();
   const { user } = useAuth();
   
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: task?.title ?? '',
@@ -76,18 +78,41 @@ export function TaskForm({ task, partnership, onTaskCreated, onCancel }: TaskFor
     },
   });
   
+  React.useEffect(() => {
+    if (task) {
+      form.reset({
+        title: task.title,
+        description: task.description,
+        type: task.type,
+        difficulty: task.difficulty,
+        assignedTo: task.assignedTo,
+        endDate: new Date(task.endDate),
+        startDate: task.startDate ? new Date(task.startDate) : undefined,
+      });
+    } else {
+        form.reset({
+            title: '',
+            description: '',
+            type: 'Única',
+            difficulty: 'Fácil',
+            assignedTo: user?.uid,
+            endDate: undefined,
+            startDate: undefined,
+        });
+    }
+  }, [task, form, user]);
+
   const taskType = form.watch('type');
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const newOrUpdatedTask = {
+  function handleFormSubmit(values: FormValues) {
+    const submissionData = {
         ...values,
+        description: values.description ?? '',
         startDate: values.startDate ? values.startDate.toISOString() : null,
         endDate: values.endDate.toISOString(),
-        status: task?.status ?? 'Pendente',
     };
     
-    // This is now an incomplete object, the parent will add `createdBy`
-    onTaskCreated(newOrUpdatedTask as Omit<Task, 'id' | 'createdBy'>);
+    onSubmit(submissionData);
     
     toast({
       title: 'Sucesso!',
@@ -97,7 +122,7 @@ export function TaskForm({ task, partnership, onTaskCreated, onCancel }: TaskFor
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="title"
@@ -254,7 +279,7 @@ export function TaskForm({ task, partnership, onTaskCreated, onCancel }: TaskFor
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl><SelectTrigger><SelectValue placeholder="Selecione um membro" /></SelectTrigger></FormControl>
                 <SelectContent>
-                  {partnership.members.map((member: UserProfile) => (
+                  {partnership.members.map((member) => (
                     <SelectItem key={member.id} value={member.id}>{member.displayName}</SelectItem>
                   ))}
                 </SelectContent>
