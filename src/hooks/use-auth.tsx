@@ -3,9 +3,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, type User } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
-import { doc, getDoc, setDoc, onSnapshot, collection, query, where, updateDoc, writeBatch } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot, collection, query, where, updateDoc, writeBatch, collectionGroup } from 'firebase/firestore';
 import type { Partnership, Invitation } from '@/types';
 import { Loader2 } from 'lucide-react';
+import { sendTaskReminders } from '@/app/actions';
 
 interface AuthContextType {
   user: User | null;
@@ -53,6 +54,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setInvitations([]);
         return;
     }
+
+     // Roda a verificação de tarefas uma vez ao carregar a aplicação se o usuário estiver logado
+    sendTaskReminders();
     
     // Listener for user's partnership
     const userDocRef = doc(db, 'users', user.uid);
@@ -97,14 +101,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const userDocRef = doc(db, 'users', firebaseUser.uid);
       const userDocSnap = await getDoc(userDocRef);
+      
+      const photoBase64 = firebaseUser.photoURL ? await toBase64(firebaseUser.photoURL) : '';
+      const userData = {
+        displayName: firebaseUser.displayName,
+        email: firebaseUser.email,
+        photoURL: photoBase64,
+      };
 
       if (!userDocSnap.exists()) {
-          const photoBase64 = firebaseUser.photoURL ? await toBase64(firebaseUser.photoURL) : '';
-          await setDoc(userDocRef, {
-            displayName: firebaseUser.displayName,
-            email: firebaseUser.email,
-            photoURL: photoBase64,
-          });
+          await setDoc(userDocRef, userData);
+      } else {
+          await updateDoc(userDocRef, userData);
       }
     } catch (error) {
       console.error("Error signing in with Google: ", error);
@@ -133,10 +141,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // 1. Create new partnership
     const partnershipRef = doc(collection(db, 'partnerships'));
+    const userPhoto = user.photoURL ? await toBase64(user.photoURL) : '';
     const newPartnership = {
         members: [
             { id: invitation.from.id, displayName: invitation.from.displayName, photoURL: invitation.from.photoURL },
-            { id: user.uid, displayName: user.displayName, email: user.email, photoURL: user.photoURL }
+            { id: user.uid, displayName: user.displayName, email: user.email, photoURL: userPhoto }
         ],
         harmonyFlame: {
             lastReset: new Date().toISOString()

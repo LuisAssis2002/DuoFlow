@@ -2,7 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { HarmonyFlame } from './harmony-flame';
-import { LogOut } from 'lucide-react';
+import { LogOut, Bell, BellOff } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from './ui/button';
 import {
@@ -16,13 +16,31 @@ import {
 import { InvitationsDropdown } from './invitations-dropdown';
 import { Inbox } from 'lucide-react';
 import Image from 'next/image';
+import { usePushNotifications } from '@/hooks/use-push-notifications';
 
 export function AppHeader() {
   const { user, partnership, logout, invitations } = useAuth();
+  const {
+    isSubscribed,
+    subscribe,
+    unsubscribe,
+    permissionStatus,
+    isSupported,
+  } = usePushNotifications();
+
   
   const user1 = partnership?.members.find(m => m.id === user?.uid);
   const user2 = partnership?.members.find(m => m.id !== user?.uid);
   const pendingInvitationsCount = invitations.length;
+  
+  const handleNotificationToggle = () => {
+    if (isSubscribed) {
+      unsubscribe();
+    } else {
+      subscribe();
+    }
+  };
+
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm">
@@ -38,6 +56,28 @@ export function AppHeader() {
         )}
         {user && (
            <div className="flex items-center gap-2 md:gap-4">
+
+            {isSupported && permissionStatus === 'granted' && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleNotificationToggle}
+                title={isSubscribed ? "Desativar Notificações" : "Ativar Notificações"}
+              >
+                {isSubscribed ? <Bell className="h-5 w-5" /> : <BellOff className="h-5 w-5 text-muted-foreground" />}
+              </Button>
+            )}
+
+            {isSupported && permissionStatus !== 'granted' && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleNotificationToggle}
+                title="Ativar Notificações"
+              >
+                <BellOff className="h-5 w-5" />
+              </Button>
+            )}
             
             {!partnership ? (
               <InvitationsDropdown>
@@ -53,7 +93,7 @@ export function AppHeader() {
             ) : (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                   <button className="flex items-center -space-x-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-full">
+                   <button className="flex items-center -space-x-2 md:-space-x-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-full">
                       {user1 && (
                           <Avatar className="h-10 w-10 md:h-12 md:w-12 border-2 md:border-4 border-background">
                               <AvatarImage src={user1.photoURL} alt={user1.displayName} data-ai-hint="person portrait" />
