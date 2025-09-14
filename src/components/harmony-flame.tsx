@@ -82,7 +82,7 @@ export function HarmonyFlame({ partnership }: HarmonyFlameProps) {
           onClick={() => setIsDialogOpen(true)}
           className="relative mx-auto h-24 w-24 rounded-full transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
-          <div className="font-headline absolute left-1/2 top-[52%] z-10 -translate-x-1/2 -translate-y-1/2 text-4xl font-bold leading-none text-foreground">
+          <div className="font-headline absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 text-4xl font-bold leading-none text-foreground">
             {harmonyDays}
           </div>
           <LiquidFlame days={harmonyDays} />
