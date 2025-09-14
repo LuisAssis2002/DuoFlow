@@ -129,7 +129,7 @@ export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDele
           </RadioGroup>
         </div>
 
-        <Button onClick={() => handleOpenForm()} className="hidden md:inline-flex shadow-sm hover:shadow-md transition-shadow">
+        <Button onClick={() => handleOpenForm()} className="hidden md:inline-flex shadow-sm hover:shadow-md transition-shadow bg-gradient-to-br from-amber-500 to-orange-600 text-white">
           <PlusCircle className="mr-2 h-4 w-4" />
           Nova Tarefa
         </Button>
@@ -139,8 +139,8 @@ export function TaskContainer({ partnership, onTaskAdd, onTaskUpdate, onTaskDele
         {renderContent()}
       </div>
 
-      <Button onClick={() => handleOpenForm()} className="md:hidden fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg z-30 flex items-center justify-center bg-primary hover:bg-primary/90">
-            <Plus className="h-8 w-8 text-primary-foreground" />
+      <Button onClick={() => handleOpenForm()} className="md:hidden fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-md hover:shadow-lg transition-shadow z-30 flex items-center justify-center bg-gradient-to-br from-amber-500 to-orange-600">
+            <Plus className="h-8 w-8 text-white" strokeWidth={3} />
       </Button>
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>

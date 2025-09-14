@@ -47,8 +47,7 @@ export function AppHeader() {
       <div className="container mx-auto flex h-24 items-center justify-between px-4">
         <div className="flex items-center gap-4">
           <Image src="/logo.png" alt="DuoFlow Logo" width={40} height={40} />
-          <h1 className="text-2xl font-bold tracking-tighter text-primary">DuoFlow</h1>
-        </div>
+          <h1 className="hidden md:block text-2xl font-bold tracking-tighter text-primary">DuoFlow</h1>        </div>
         {user && (
            <div className="flex flex-grow items-center justify-center">
              {partnership && <HarmonyFlame partnership={partnership} />}
