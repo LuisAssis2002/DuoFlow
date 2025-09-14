@@ -6,6 +6,7 @@ import { auth, db } from '@/lib/firebase';
 import { doc, getDoc, setDoc, onSnapshot, collection, query, where, updateDoc, writeBatch, collectionGroup } from 'firebase/firestore';
 import type { Partnership, Invitation } from '@/types';
 import { Loader2 } from 'lucide-react';
+import { sendTaskReminders } from '@/app/actions';
 
 interface AuthContextType {
   user: User | null;
@@ -54,6 +55,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
     }
 
+    // Roda a verificação de tarefas uma vez ao carregar a aplicação se o usuário estiver logado
+    const vapidKeys = {
+      publicKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '',
+      privateKey: process.env.VAPID_PRIVATE_KEY || '',
+      subject: process.env.VAPID_SUBJECT || ''
+    };
+    if (vapidKeys.publicKey && vapidKeys.privateKey && vapidKeys.subject) {
+      sendTaskReminders(vapidKeys);
+    }
+    
     // Listener for user's partnership
     const userDocRef = doc(db, 'users', user.uid);
     const unsubscribeUser = onSnapshot(userDocRef, (userDoc) => {
