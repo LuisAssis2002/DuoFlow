@@ -16,33 +16,14 @@ import {
 import { InvitationsDropdown } from './invitations-dropdown';
 import { Inbox } from 'lucide-react';
 import Image from 'next/image';
-import { usePushNotifications } from '@/hooks/use-push-notifications';
-import { Switch } from './ui/switch';
-import { Label } from './ui/label';
 
 export function AppHeader() {
   const { user, partnership, logout, invitations } = useAuth();
-  const {
-    isSubscribed,
-    subscribe,
-    unsubscribe,
-    isSupported,
-  } = usePushNotifications();
 
-  
   const user1 = partnership?.members.find(m => m.id === user?.uid);
   const user2 = partnership?.members.find(m => m.id !== user?.uid);
   const pendingInvitationsCount = invitations.length;
   
-  const handleNotificationToggle = () => {
-    if (isSubscribed) {
-      unsubscribe();
-    } else {
-      subscribe();
-    }
-  };
-
-
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto flex h-24 items-center justify-between px-4">
@@ -94,18 +75,6 @@ export function AppHeader() {
                       </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  {isSupported && (
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                        <div className="flex items-center justify-between w-full">
-                           <Label htmlFor="notifications-switch" className="font-normal cursor-pointer">Notificações</Label>
-                           <Switch
-                             id="notifications-switch"
-                             checked={isSubscribed}
-                             onCheckedChange={handleNotificationToggle}
-                           />
-                        </div>
-                    </DropdownMenuItem>
-                  )}
                   <DropdownMenuItem onClick={logout} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Sair</span>
